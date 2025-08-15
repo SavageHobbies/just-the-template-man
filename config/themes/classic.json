@@ -1,0 +1,50 @@
+{
+  "name": "Classic Theme",
+  "description": "Traditional eBay-style design with familiar elements",
+  "customStyles": {
+    "primaryColor": "#0066cc",
+    "secondaryColor": "#f5f5f5",
+    "fontFamily": "Arial, Helvetica, sans-serif",
+    "fontSize": "14px",
+    "borderRadius": "4px",
+    "boxShadow": "0 1px 3px rgba(0, 0, 0, 0.12)",
+    "headerBackground": "#0066cc",
+    "textColor": "#333333",
+    "linkColor": "#0066cc",
+    "buttonColor": "#0066cc",
+    "warningColor": "#ff9900",
+    "errorColor": "#cc0000",
+    "successColor": "#009900"
+  },
+  "layout": {
+    "containerWidth": "100%",
+    "maxWidth": "1000px",
+    "padding": "16px",
+    "margin": "0 auto",
+    "responsive": true,
+    "mobileBreakpoint": "768px",
+    "gridGap": "16px"
+  },
+  "imageGallery": {
+    "layout": "carousel",
+    "aspectRatio": "1:1",
+    "spacing": "8px",
+    "borderRadius": "4px",
+    "hoverEffect": "none",
+    "showDots": true,
+    "showArrows": true
+  },
+  "typography": {
+    "headingFont": "Arial, sans-serif",
+    "bodyFont": "Arial, sans-serif",
+    "headingWeight": "bold",
+    "bodyWeight": "normal",
+    "lineHeight": "1.4",
+    "letterSpacing": "normal"
+  },
+  "animations": {
+    "enabled": false,
+    "duration": "0s",
+    "easing": "linear"
+  }
+}

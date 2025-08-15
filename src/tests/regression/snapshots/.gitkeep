@@ -1,0 +1,2 @@
+# This directory stores regression test snapshots
+# Snapshots are used to detect changes in optimization output between versions

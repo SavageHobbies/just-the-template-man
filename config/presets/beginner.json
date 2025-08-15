@@ -1,0 +1,98 @@
+{
+  "name": "Beginner Preset",
+  "description": "Conservative settings for new eBay sellers",
+  "scraping": {
+    "requestTimeout": 30000,
+    "requestDelay": 2000,
+    "maxRetries": 3,
+    "maxConcurrentRequests": 2,
+    "useProxyRotation": false,
+    "proxyServers": [],
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+  },
+  "research": {
+    "maxSimilarListings": 15,
+    "historicalDataDays": 30,
+    "minConfidenceThreshold": 0.6,
+    "searchPlatforms": ["ebay"],
+    "excludeKeywords": ["broken", "damaged", "parts", "repair"],
+    "dataSourceWeights": { "ebay": 1.0, "amazon": 0.0, "other": 0.0 },
+    "insufficientDataHandling": {
+      "enableAutoExpansion": false,
+      "minListingsThreshold": 3,
+      "fallbackPlatforms": ["amazon"],
+      "relaxExcludeKeywords": false,
+      "extendHistoricalDays": 45,
+      "fallbackConfidenceThreshold": 0.5
+    }
+  },
+  "pricing": {
+    "algorithm": "competitive",
+    "strategy": "conservative",
+    "marginPercentage": 10,
+    "minPrice": 5,
+    "maxPrice": 500,
+    "weights": {
+      "marketAverage": 0.5,
+      "competitorPricing": 0.3,
+      "historicalSales": 0.15,
+      "condition": 0.05
+    },
+    "advanced": {
+      "enableDynamicPricing": false,
+      "trendAnalysisDays": 7,
+      "trendAdjustmentFactor": 1.05,
+      "seasonalAdjustments": {
+        "enabled": false,
+        "peakSeasonMultiplier": 1.1,
+        "offSeasonMultiplier": 0.95
+      },
+      "competitiveThresholds": {
+        "competitiveThreshold": 0.1,
+        "premiumThreshold": 0.2
+      }
+    }
+  },
+  "keywords": {
+    "titleWeight": 0.4,
+    "descriptionWeight": 0.3,
+    "categoryWeight": 0.15,
+    "brandWeight": 0.1,
+    "conditionWeight": 0.05,
+    "minFrequencyThreshold": 3,
+    "maxKeywords": 15,
+    "trendingBoost": 1.1
+  },
+  "optimization": {
+    "contentStrategy": "balanced",
+    "titleOptimization": "readable",
+    "descriptionStyle": "detailed",
+    "pricingApproach": "competitive",
+    "targetAudience": "quality_seekers",
+    "goals": {
+      "maximizeVisibility": true,
+      "maximizeConversion": true,
+      "maximizeProfit": false
+    }
+  },
+  "templates": {
+    "customStyles": {
+      "primaryColor": "#0066cc",
+      "secondaryColor": "#f8f9fa",
+      "fontFamily": "Arial, sans-serif",
+      "fontSize": "14px"
+    },
+    "imageGallery": {
+      "maxImages": 3,
+      "imageSize": "medium",
+      "showThumbnails": true,
+      "enableZoom": false
+    },
+    "formatting": {
+      "useMarkdown": false,
+      "includeBulletPoints": true,
+      "highlightKeyFeatures": true,
+      "addCallToAction": false
+    }
+  }
+}

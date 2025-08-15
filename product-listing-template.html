@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{TITLE}} - Product Listing</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientFlow 15s ease infinite;
+            min-height: 100vh;
+        }
+
+        @keyframes gradientFlow {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Floating gradient orbs */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.3) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+            z-index: -2;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+
+            33% {
+                transform: translateY(-20px) rotate(120deg);
+            }
+
+            66% {
+                transform: translateY(20px) rotate(240deg);
+            }
+        }
+
+        .listing-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-banner {
+            background: linear-gradient(-45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #ffeaa7, #dda0dd);
+            background-size: 400% 400%;
+            animation: gradientFlow 12s ease infinite;
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+            background-size: 200% 200%;
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -200% 0;
+            }
+
+            100% {
+                background-position: 200% 0;
+            }
+        }
+
+        .header-banner h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header-banner .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .product-showcase {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            padding: 40px;
+        }
+
+        .image-gallery {
+            text-align: center;
+        }
+
+        .main-image {
+            width: 100%;
+            max-width: 400px;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+        }
+
+        .thumbnail-gallery {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .thumbnail {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .thumbnail:hover {
+            border-color: #667eea;
+            transform: scale(1.05);
+        }
+
+        .product-info {
+            padding: 20px 0;
+        }
+
+        .product-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            line-height: 1.3;
+        }
+
+        .price-section {
+            background: linear-gradient(-45deg, #ff6b6b, #ee5a24, #ff9ff3, #54a0ff);
+            background-size: 400% 400%;
+            animation: gradientFlow 10s ease infinite;
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .price-section::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: priceShine 2s infinite;
+        }
+
+        @keyframes priceShine {
+            0% {
+                left: -100%;
+            }
+
+            100% {
+                left: 100%;
+            }
+        }
+
+        .price {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+
+        .price-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .key-features {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .key-features h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .features-list {
+            list-style: none;
+        }
+
+        .features-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            align-items: center;
+        }
+
+        .features-list li:before {
+            content: "✓";
+            color: #28a745;
+            font-weight: bold;
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        .description-section {
+            padding: 40px;
+            background: white;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+            display: inline-block;
+        }
+
+        .description-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #555;
+        }
+
+        .specifications {
+            background: #f8f9fa;
+            padding: 40px;
+        }
+
+        .spec-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .spec-item {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .spec-label {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .spec-value {
+            color: #555;
+            font-size: 1.1rem;
+        }
+
+        .trust-badges {
+            background: #2c3e50;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .badges-grid {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .badge {
+            text-align: center;
+        }
+
+        .badge-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .badge-text {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .cta-section {
+            background: linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #f5576c, #4facfe, #00f2fe);
+            background-size: 400% 400%;
+            animation: gradientFlow 8s ease infinite;
+            color: white;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+        }
+
+        .cta-button {
+            background: linear-gradient(-45deg, #ff6b6b, #ee5a24, #ff9ff3, #54a0ff);
+            background-size: 400% 400%;
+            animation: gradientFlow 6s ease infinite;
+            color: white;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.5s;
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .footer-info {
+            background: #34495e;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Tabs Styles */
+        .tabs-section {
+            background: white;
+            margin: 0;
+        }
+
+        .tab-navigation {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 3px solid #e9ecef;
+            overflow-x: auto;
+        }
+
+        .tab-button {
+            background: transparent;
+            border: none;
+            padding: 20px 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+        }
+
+        .tab-button:hover {
+            background: #e9ecef;
+            color: #333;
+        }
+
+        .tab-button.active {
+            color: white;
+            border-bottom: none;
+            background: linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #f5576c);
+            background-size: 400% 400%;
+            animation: gradientFlow 8s ease infinite;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 40px;
+            min-height: 300px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .tab-content h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .tab-content h4 {
+            color: #667eea;
+            margin: 20px 0 10px 0;
+            font-size: 1.2rem;
+        }
+
+        .tab-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #555;
+        }
+
+        .tab-text ul {
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+
+        .tab-text li {
+            margin: 8px 0;
+        }
+
+        .shipping-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .shipping-option {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .shipping-option h4 {
+            margin: 0 0 10px 0;
+            color: #2c3e50;
+        }
+
+        .shipping-option p {
+            margin: 5px 0;
+            color: #666;
+        }
+
+        .reviews-summary {
+            max-width: 800px;
+        }
+
+        .rating-overview {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .overall-rating .rating-number {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #667eea;
+            display: block;
+        }
+
+        .stars {
+            font-size: 1.5rem;
+            margin: 10px 0;
+        }
+
+        .review-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid #28a745;
+        }
+
+        .review-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .review-header strong {
+            color: #2c3e50;
+        }
+
+        .review-stars {
+            color: #ffc107;
+        }
+
+        .review-date {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .warranty-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .warranty-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #28a745;
+        }
+
+        .warranty-item h4 {
+            margin: 0 0 10px 0;
+            color: #2c3e50;
+        }
+
+        .spec-table {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .spec-table .spec-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        @media (max-width: 768px) {
+            .product-showcase {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                padding: 20px;
+            }
+
+            .header-banner h1 {
+                font-size: 2rem;
+            }
+
+            .product-title {
+                font-size: 1.5rem;
+            }
+
+            .price {
+                font-size: 2rem;
+            }
+
+            .badges-grid {
+                gap: 20px;
+            }
+
+            .contact-info {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="listing-container">
+        <!-- Header Banner -->
+        <div class="header-banner">
+            <h1>{{TITLE}}</h1>
+            <div class="subtitle">Premium Quality • Fast Shipping • Satisfaction Guaranteed</div>
+        </div>
+
+        <!-- Product Showcase -->
+        <div class="product-showcase">
+            <div class="image-gallery">
+                <img src="{{MAIN_IMAGE}}" alt="{{TITLE}}" class="main-image" id="mainImage">
+                <div class="thumbnail-gallery">
+                    <img src="{{IMAGE_1}}" alt="Product view 1" class="thumbnail" onclick="changeImage(this.src)">
+                    <img src="{{IMAGE_2}}" alt="Product view 2" class="thumbnail" onclick="changeImage(this.src)">
+                    <img src="{{IMAGE_3}}" alt="Product view 3" class="thumbnail" onclick="changeImage(this.src)">
+                    <img src="{{IMAGE_4}}" alt="Product view 4" class="thumbnail" onclick="changeImage(this.src)">
+                </div>
+            </div>
+
+            <div class="product-info">
+                <h2 class="product-title">{{TITLE}}</h2>
+
+                <div class="price-section">
+                    <div class="price">{{PRICE}}</div>
+                    <div class="price-label">Free Shipping • Best Price Guarantee</div>
+                </div>
+
+                <div class="key-features">
+                    <h3>🌟 Key Features</h3>
+                    <ul class="features-list">
+                        <li>{{FEATURE_1}}</li>
+                        <li>{{FEATURE_2}}</li>
+                        <li>{{FEATURE_3}}</li>
+                        <li>{{FEATURE_4}}</li>
+                        <li>{{FEATURE_5}}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Description Section -->
+        <div class="description-section">
+            <h2 class="section-title">📝 Product Description</h2>
+            <div class="description-content">
+                {{DESCRIPTION}}
+            </div>
+        </div>
+
+        <!-- Specifications -->
+        <div class="specifications">
+            <h2 class="section-title">🔧 Specifications</h2>
+            <div class="spec-grid">
+                {{ITEM_SPECIFICS}}
+            </div>
+        </div>
+
+        <!-- Trust Badges -->
+        <div class="trust-badges">
+            <h2>Why Choose Us?</h2>
+            <div class="badges-grid">
+                <div class="badge">
+                    <span class="badge-icon">🚚</span>
+                    <div class="badge-text">Fast & Free<br>Shipping</div>
+                </div>
+                <div class="badge">
+                    <span class="badge-icon">🛡️</span>
+                    <div class="badge-text">Money Back<br>Guarantee</div>
+                </div>
+                <div class="badge">
+                    <span class="badge-icon">⭐</span>
+                    <div class="badge-text">5-Star<br>Reviews</div>
+                </div>
+                <div class="badge">
+                    <span class="badge-icon">📞</span>
+                    <div class="badge-text">24/7 Customer<br>Support</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabbed Information Section -->
+        <div class="tabs-section">
+            <div class="tab-navigation">
+                <button class="tab-button active" onclick="openTab(event, 'description-tab')">📝 Description</button>
+                <button class="tab-button" onclick="openTab(event, 'specifications-tab')">🔧 Specifications</button>
+                <button class="tab-button" onclick="openTab(event, 'shipping-tab')">🚚 Shipping & Returns</button>
+                <button class="tab-button" onclick="openTab(event, 'reviews-tab')">⭐ Reviews</button>
+                <button class="tab-button" onclick="openTab(event, 'warranty-tab')">🛡️ Warranty</button>
+            </div>
+
+            <div id="description-tab" class="tab-content active">
+                <h3>Product Description</h3>
+                <div class="tab-text">
+                    {{DESCRIPTION}}
+
+                    <h4>What's Included:</h4>
+                    <ul>
+                        <li>{{INCLUDED_ITEM_1}}</li>
+                        <li>{{INCLUDED_ITEM_2}}</li>
+                        <li>{{INCLUDED_ITEM_3}}</li>
+                        <li>{{INCLUDED_ITEM_4}}</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div id="specifications-tab" class="tab-content">
+                <h3>Technical Specifications</h3>
+                <div class="spec-table">
+                    {{ITEM_SPECIFICS}}
+                </div>
+            </div>
+
+            <div id="shipping-tab" class="tab-content">
+                <h3>Shipping & Returns</h3>
+                <div class="tab-text">
+                    <div class="shipping-grid">
+                        <div class="shipping-option">
+                            <h4>🚚 Standard Shipping</h4>
+                            <p><strong>FREE</strong> - 5-7 business days</p>
+                            <p>Available to all US addresses</p>
+                        </div>
+                        <div class="shipping-option">
+                            <h4>⚡ Express Shipping</h4>
+                            <p><strong>$9.99</strong> - 2-3 business days</p>
+                            <p>Order by 2PM for same-day processing</p>
+                        </div>
+                        <div class="shipping-option">
+                            <h4>🌍 International</h4>
+                            <p><strong>Calculated</strong> - 7-14 business days</p>
+                            <p>Duties and taxes may apply</p>
+                        </div>
+                    </div>
+
+                    <h4>Return Policy</h4>
+                    <p>30-day money-back guarantee. Items must be returned in original condition with all packaging and
+                        accessories.</p>
+                </div>
+            </div>
+
+            <div id="reviews-tab" class="tab-content">
+                <h3>Customer Reviews</h3>
+                <div class="reviews-summary">
+                    <div class="rating-overview">
+                        <div class="overall-rating">
+                            <span class="rating-number">4.8</span>
+                            <div class="stars">⭐⭐⭐⭐⭐</div>
+                            <p>Based on 247 reviews</p>
+                        </div>
+                    </div>
+
+                    <div class="review-item">
+                        <div class="review-header">
+                            <strong>Sarah M.</strong>
+                            <span class="review-stars">⭐⭐⭐⭐⭐</span>
+                            <span class="review-date">March 15, 2024</span>
+                        </div>
+                        <p>"Excellent quality and fast shipping! Exactly as described and works perfectly."</p>
+                    </div>
+
+                    <div class="review-item">
+                        <div class="review-header">
+                            <strong>Mike R.</strong>
+                            <span class="review-stars">⭐⭐⭐⭐⭐</span>
+                            <span class="review-date">March 10, 2024</span>
+                        </div>
+                        <p>"Great value for money. Customer service was very helpful when I had questions."</p>
+                    </div>
+
+                    <div class="review-item">
+                        <div class="review-header">
+                            <strong>Jennifer L.</strong>
+                            <span class="review-stars">⭐⭐⭐⭐⭐</span>
+                            <span class="review-date">March 8, 2024</span>
+                        </div>
+                        <p>"Highly recommend! Product arrived quickly and exceeded my expectations."</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="warranty-tab" class="tab-content">
+                <h3>Warranty & Support</h3>
+                <div class="tab-text">
+                    <div class="warranty-grid">
+                        <div class="warranty-item">
+                            <h4>🛡️ Manufacturer Warranty</h4>
+                            <p>1-year full replacement warranty covering all defects in materials and workmanship.</p>
+                        </div>
+                        <div class="warranty-item">
+                            <h4>🔧 Technical Support</h4>
+                            <p>Free lifetime technical support via phone, email, and live chat.</p>
+                        </div>
+                        <div class="warranty-item">
+                            <h4>📞 Contact Support</h4>
+                            <p>Email: support@aimagiclister.com<br>Phone: 1-800-MAGIC-AI<br>Hours: Mon-Fri 9AM-6PM EST
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Call to Action -->
+        <div class="cta-section">
+            <h2>Ready to Order?</h2>
+            <p>Join thousands of satisfied customers!</p>
+            <a href="#" class="cta-button">🛒 Buy Now</a>
+            <a href="#" class="cta-button">💬 Ask a Question</a>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer-info">
+            <h3>Contact Information</h3>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <span>📧</span>
+                    <span>support@aimagiclister.com</span>
+                </div>
+                <div class="contact-item">
+                    <span>📱</span>
+                    <span>1-800-MAGIC-AI</span>
+                </div>
+                <div class="contact-item">
+                    <span>🕒</span>
+                    <span>Mon-Fri 9AM-6PM EST</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function changeImage(src) {
+            document.getElementById('mainImage').src = src;
+        }
+
+        // Tab functionality
+        function openTab(evt, tabName) {
+            var i, tabcontent, tabbuttons;
+
+            // Hide all tab content
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].classList.remove("active");
+            }
+
+            // Remove active class from all tab buttons
+            tabbuttons = document.getElementsByClassName("tab-button");
+            for (i = 0; i < tabbuttons.length; i++) {
+                tabbuttons[i].classList.remove("active");
+            }
+
+            // Show the selected tab and mark button as active
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+
+        // Add smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Initialize first tab as active
+        document.addEventListener('DOMContentLoaded', function () {
+            // Ensure first tab is active on load
+            const firstTab = document.querySelector('.tab-button');
+            const firstContent = document.querySelector('.tab-content');
+            if (firstTab && firstContent) {
+                firstTab.classList.add('active');
+                firstContent.classList.add('active');
+            }
+        });
+    </script>
+</body>
+
+</html>

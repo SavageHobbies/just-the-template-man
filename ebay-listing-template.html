@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{TITLE}} - Top Rated eBay Seller</title>
+    <style>
+        :root {
+            --primary-color: #3F51B5;
+            --secondary-color: #FF9800;
+            --text-color: #333;
+            --background-color: #f0f0f0;
+            --section-background: #fff;
+            --border-color: #eee;
+            --tab-active-color: #3F51B5;
+            --tab-inactive-color: #f5f5f5;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientFlow 15s ease infinite;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        @keyframes gradientFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 0;
+            background-color: #fff;
+            box-shadow: 0px 4px 30px rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #f5576c);
+            background-size: 400% 400%;
+            animation: gradientFlow 20s ease infinite;
+            border-radius: 17px;
+            z-index: -1;
+        }
+
+        header {
+            position: relative;
+            background: linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #f5576c);
+            background-size: 400% 400%;
+            animation: gradientFlow 12s ease infinite;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            overflow: hidden;
+        }
+
+        .top-rated-badge {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            color: #333;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9em;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .logo {
+            position: relative;
+            z-index: 1;
+            margin-bottom: 10px;
+        }
+
+        .logo img {
+            max-width: 250px;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+        header h1 {
+            font-size: 1.4em;
+            margin: 0;
+            position: relative;
+            z-index: 1;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .product-title {
+            background: linear-gradient(-45deg, #FF9800, #FF5722, #E91E63, #9C27B0);
+            background-size: 400% 400%;
+            animation: gradientFlow 8s ease infinite;
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+        }
+
+        .product-title h2 {
+            font-size: 1.5em;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .product-container {
+            display: flex;
+            justify-content: space-between;
+            padding: 25px;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .product-image {
+            width: 100%;
+            max-width: 480px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.15);
+            position: relative;
+        }
+
+        .product-image::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #f5576c);
+            background-size: 400% 400%;
+            animation: gradientFlow 15s ease infinite;
+            border-radius: 14px;
+            z-index: -1;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.3s ease;
+            border-radius: 10px;
+        }
+
+        .product-image img:hover {
+            transform: scale(1.02);
+        }
+
+        .product-details {
+            width: 100%;
+            max-width: calc(100% - 500px);
+        }
+
+        .description-section {
+            background-color: var(--section-background);
+            padding: 25px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .description-section:hover {
+            box-shadow: 0px 8px 25px rgba(102, 126, 234, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .description-section h3 {
+            background: linear-gradient(-45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            border-bottom: 3px solid var(--secondary-color);
+            padding-bottom: 10px;
+            font-size: 1.4em;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+        }
+
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            margin-top: 20px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .tabs label {
+            order: 1;
+            display: block;
+            padding: 15px 25px;
+            margin-right: 2px;
+            cursor: pointer;
+            background: var(--tab-inactive-color);
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            border-radius: 12px 12px 0 0;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .tabs label:hover {
+            background: #e0e0e0;
+            transform: translateY(-2px);
+        }
+
+        .tabs .tab {
+            order: 99;
+            flex-grow: 1;
+            width: 100%;
+            display: none;
+            padding: 25px;
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-top: none;
+            border-radius: 0 0 12px 12px;
+        }
+
+        .tabs input[type="radio"] {
+            display: none;
+        }
+
+        .tabs input[type="radio"]:checked + label {
+            background: linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #f5576c);
+            background-size: 400% 400%;
+            animation: gradientFlow 8s ease infinite;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .tabs input[type="radio"]:checked + label + .tab {
+            display: block;
+        }
+
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        ul li {
+            padding-left: 30px;
+            position: relative;
+            margin-bottom: 10px;
+            font-size: 1.05em;
+        }
+
+        ul li::before {
+            content: '✓';
+            color: var(--primary-color);
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        p {
+            margin-bottom: 1.2em;
+            line-height: 1.8;
+            font-size: 1.05em;
+        }
+
+        .disclaimer {
+            font-size: 0.9em;
+            color: #666;
+            line-height: 1.4;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        .seller-info {
+            background: linear-gradient(-45deg, #28a745, #20c997, #17a2b8, #007bff);
+            background-size: 400% 400%;
+            animation: gradientFlow 10s ease infinite;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .seller-badges {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            backdrop-filter: blur(10px);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 10px;
+            }
+
+            .product-container {
+                flex-direction: column;
+                padding: 20px;
+            }
+
+            .product-image, .product-details {
+                max-width: 100%;
+                margin-bottom: 20px;
+            }
+
+            header h1 {
+                font-size: 1.2em;
+            }
+
+            .product-title h2 {
+                font-size: 1.3em;
+            }
+
+            .tabs label {
+                padding: 12px 18px;
+                font-size: 0.8em;
+            }
+
+            .logo img {
+                max-width: 200px;
+            }
+
+            .top-rated-badge {
+                position: static;
+                display: inline-block;
+                margin-bottom: 10px;
+            }
+
+            .seller-badges {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="top-rated-badge">
+                ⭐ TOP RATED SELLER ⭐
+            </div>
+            <div class="logo">
+                <img src="{{SELLER_LOGO}}" alt="{{SELLER_NAME}} Logo">
+            </div>
+            <h1>{{SELLER_TAGLINE}}</h1>
+        </header>
+
+        <div class="product-title">
+            <h2>{{TITLE}}</h2>
+        </div>
+
+        <div class="product-container">
+            <div class="product-image">
+                <img src="{{MAIN_IMAGE}}" alt="{{TITLE}}">
+            </div>
+            <div class="product-details">
+                <h3>Product Details</h3>
+                <ul>
+                    {{PRODUCT_DETAILS_LIST}}
+                </ul>
+            </div>
+        </div>
+
+        <div class="description-section">
+            <h3>Product Description</h3>
+            <p>{{DESCRIPTION}}</p>
+        </div>
+
+        <div class="description-section">
+            <h3>Condition Notes</h3>
+            <p>{{CONDITION_NOTES}}</p>
+        </div>
+
+        <div class="description-section">
+            <h3>What's Included</h3>
+            <ul>
+                {{WHATS_INCLUDED_LIST}}
+            </ul>
+        </div>
+
+        <div class="description-section">
+            <h3>Item Specifics</h3>
+            <ul>
+                {{ITEM_SPECIFICS}}
+            </ul>
+        </div>
+
+        <div class="description-section">
+            <h3>Tags/Keywords</h3>
+            <p>{{KEYWORDS_DESCRIPTION}}</p>
+        </div>
+
+        <div class="tabs">
+            <input type="radio" name="tabs" id="tab1" checked>
+            <label for="tab1">Grading Scale</label>
+            <div class="tab">
+                <h3>Our Grading Scale</h3>
+                <p>We grade our collectibles on a scale of 1-10. For items with packaging, we grade the condition of the outside packaging.</p>
+                <ul>
+                    <li><strong>10: Mint</strong> – Perfect condition.</li>
+                    <li><strong>9: Near Mint</strong> – Very minor imperfections, usually only visible under close inspection.</li>
+                    <li><strong>8: Minor Damage</strong> – Small dents/creases that don't affect overall appeal.</li>
+                    <li><strong>7: Moderate Damage</strong> – Noticeable damage but still displayable.</li>
+                    <li><strong>6: Significant Damage</strong> – Obvious damage affecting appearance.</li>
+                    <li><strong>5: Major Damage</strong> – Substantial damage, item still intact.</li>
+                    <li><strong>4: Heavily Damaged</strong> – May include removed stickers or tears.</li>
+                    <li><strong>3: Out of Package, Excellent</strong> – No packaging, item in great condition.</li>
+                    <li><strong>2: Out of Package, Good</strong> – No packaging, moderate wear.</li>
+                    <li><strong>1: Poor Condition</strong> – Obvious signs of heavy use or damage.</li>
+                </ul>
+                <div class="disclaimer">
+                    <strong>Grading Disclaimer:</strong><br>
+                    Our grading scale is subjective and may vary based on individual perspectives. We strive for accuracy and consistency, but grading is not an exact science. We tend to grade conservatively and disclose all visible flaws. Please review photos carefully, as lighting and angles may affect appearance. Contact us for additional photos if needed.
+                </div>
+            </div>
+
+            <input type="radio" name="tabs" id="tab2">
+            <label for="tab2">Authenticity</label>
+            <div class="tab">
+                <h3>100% Authenticity Guarantee</h3>
+                <p>As a <strong>Top Rated eBay Seller</strong> with <strong>100% positive feedback</strong>, we guarantee all items are 100% authentic. We source directly from authorized distributors and manufacturers.</p>
+                <ul>
+                    <li>All items verified for authenticity before listing</li>
+                    <li>Direct sourcing from authorized retailers</li>
+                    <li>Detailed inspection process for every item</li>
+                    <li>Money-back guarantee if authenticity is questioned</li>
+                </ul>
+            </div>
+
+            <input type="radio" name="tabs" id="tab3">
+            <label for="tab3">Shipping Info</label>
+            <div class="tab">
+                <h3>Fast & Secure Shipping</h3>
+                <p>We offer reliable shipping with careful packaging to ensure your item arrives safely:</p>
+                <ul>
+                    <li><strong>Free Standard Shipping</strong> on orders over $35 (Continental US)</li>
+                    <li><strong>Same-Day Processing</strong> for orders placed before 2 PM EST</li>
+                    <li><strong>Expedited Options</strong> available at checkout</li>
+                    <li><strong>International Shipping</strong> to select countries</li>
+                    <li><strong>Professional Packaging</strong> with bubble wrap and protective materials</li>
+                    <li><strong>Tracking Provided</strong> via email once shipped</li>
+                </ul>
+            </div>
+
+            <input type="radio" name="tabs" id="tab4">
+            <label for="tab4">Returns Policy</label>
+            <div class="tab">
+                <h3>Returns & Satisfaction Guarantee</h3>
+                <p>Your satisfaction is our priority. We offer a fair return policy:</p>
+                <ul>
+                    <li><strong>30-Day Return Window</strong> from delivery date</li>
+                    <li><strong>Items must be returned</strong> in original condition</li>
+                    <li><strong>Return shipping</strong> paid by buyer unless item not as described</li>
+                    <li><strong>Refund processed</strong> within 2 business days of receiving return</li>
+                    <li><strong>Contact us first</strong> before returning for fastest resolution</li>
+                </ul>
+                <p><strong>Note:</strong> Please review all photos and descriptions carefully before purchase. Condition is accurately represented in our listings.</p>
+            </div>
+
+            <input type="radio" name="tabs" id="tab5">
+            <label for="tab5">About Our Store</label>
+            <div class="tab">
+                <h3>Why Choose Us?</h3>
+                <p>We're proud to be a <strong>Top Rated eBay Seller</strong> with an outstanding track record:</p>
+                <ul>
+                    <li><strong>100% Positive Feedback</strong> from thousands of satisfied customers</li>
+                    <li><strong>Top Rated Seller Status</strong> - eBay's highest seller recognition</li>
+                    <li><strong>Fast Shipping</strong> with same-day processing</li>
+                    <li><strong>Professional Service</strong> with responsive customer support</li>
+                    <li><strong>Accurate Descriptions</strong> with detailed photos</li>
+                    <li><strong>Secure Packaging</strong> to prevent damage</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="seller-info">
+            <h3>🏆 Top Rated eBay Seller - 100% Positive Feedback 🏆</h3>
+            <p>Thank you for choosing our store! We're committed to providing excellent service and authentic products.</p>
+            <div class="seller-badges">
+                <div class="badge">⭐ Top Rated Seller</div>
+                <div class="badge">💯 100% Feedback</div>
+                <div class="badge">🚚 Fast Shipping</div>
+                <div class="badge">🛡️ Authenticity Guaranteed</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

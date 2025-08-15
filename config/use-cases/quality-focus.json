@@ -1,0 +1,80 @@
+{
+  "name": "Quality Focused Processing",
+  "description": "Prioritizes data quality and comprehensive analysis",
+  "scraping": {
+    "requestTimeout": 60000,
+    "requestDelay": 3000,
+    "maxRetries": 5,
+    "maxConcurrentRequests": 3,
+    "useProxyRotation": false
+  },
+  "research": {
+    "maxSimilarListings": 75,
+    "historicalDataDays": 120,
+    "minConfidenceThreshold": 0.9,
+    "searchPlatforms": ["ebay", "amazon", "etsy"],
+    "insufficientDataHandling": {
+      "enableAutoExpansion": true,
+      "minListingsThreshold": 20,
+      "fallbackPlatforms": ["mercari", "facebook", "poshmark"],
+      "relaxExcludeKeywords": true,
+      "extendHistoricalDays": 180,
+      "fallbackConfidenceThreshold": 0.8
+    }
+  },
+  "pricing": {
+    "algorithm": "premium",
+    "strategy": "conservative",
+    "marginPercentage": 20,
+    "advanced": {
+      "enableDynamicPricing": true,
+      "trendAnalysisDays": 30,
+      "trendAdjustmentFactor": 1.3,
+      "seasonalAdjustments": {
+        "enabled": true,
+        "peakSeasonMultiplier": 1.4,
+        "offSeasonMultiplier": 0.85
+      }
+    }
+  },
+  "keywords": {
+    "maxKeywords": 40,
+    "minFrequencyThreshold": 1,
+    "trendingBoost": 1.5,
+    "titleWeight": 0.5,
+    "descriptionWeight": 0.3,
+    "categoryWeight": 0.1,
+    "brandWeight": 0.08,
+    "conditionWeight": 0.02
+  },
+  "templates": {
+    "imageGallery": {
+      "maxImages": 15,
+      "imageSize": "large",
+      "showThumbnails": true,
+      "enableZoom": true,
+      "extraction": {
+        "prioritizeHighRes": true,
+        "validateUrls": true,
+        "validationTimeout": 10000,
+        "retryAttempts": 5,
+        "cacheImages": true,
+        "minDimensions": {
+          "width": 800,
+          "height": 600
+        }
+      }
+    },
+    "formatting": {
+      "useMarkdown": true,
+      "includeBulletPoints": true,
+      "highlightKeyFeatures": true,
+      "addCallToAction": true,
+      "emphasizePrice": true,
+      "showConditionBadge": true,
+      "includeShippingInfo": true,
+      "addReturnPolicy": true,
+      "sectionDividers": true
+    }
+  }
+}

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug - eBay Optimizer</title>
+</head>
+<body>
+    <h1>Debug Test</h1>
+    
+    <form id="testForm">
+        <input type="url" id="testUrl" placeholder="Enter eBay URL" required>
+        <button type="submit">Test Submit</button>
+    </form>
+    
+    <div id="output"></div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM loaded');
+            
+            const form = document.getElementById('testForm');
+            const output = document.getElementById('output');
+            
+            if (!form) {
+                console.error('Form not found!');
+                return;
+            }
+            
+            form.addEventListener('submit', (e) => {
+                console.log('Form submitted!');
+                e.preventDefault();
+                
+                const url = document.getElementById('testUrl').value;
+                output.innerHTML = `<p>Form submitted with URL: ${url}</p>`;
+                
+                // Test API call
+                fetch('/api/validate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url: url })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    output.innerHTML += `<p>API Response: ${JSON.stringify(data)}</p>`;
+                })
+                .catch(error => {
+                    output.innerHTML += `<p>API Error: ${error.message}</p>`;
+                });
+            });
+        });
+    </script>
+</body>
+</html>

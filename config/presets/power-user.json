@@ -1,0 +1,110 @@
+{
+  "name": "Power User Preset",
+  "description": "Advanced settings for experienced eBay sellers",
+  "scraping": {
+    "requestTimeout": 60000,
+    "requestDelay": 800,
+    "maxRetries": 7,
+    "maxConcurrentRequests": 10,
+    "useProxyRotation": true,
+    "proxyServers": [],
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+  },
+  "research": {
+    "maxSimilarListings": 50,
+    "historicalDataDays": 90,
+    "minConfidenceThreshold": 0.85,
+    "searchPlatforms": ["ebay", "amazon"],
+    "excludeKeywords": ["broken", "damaged", "parts", "repair", "untested", "as-is"],
+    "dataSourceWeights": { "ebay": 0.6, "amazon": 0.35, "other": 0.05 },
+    "insufficientDataHandling": {
+      "enableAutoExpansion": true,
+      "minListingsThreshold": 15,
+      "fallbackPlatforms": ["etsy", "mercari", "facebook", "poshmark"],
+      "relaxExcludeKeywords": true,
+      "extendHistoricalDays": 120,
+      "fallbackConfidenceThreshold": 0.7
+    }
+  },
+  "pricing": {
+    "algorithm": "premium",
+    "strategy": "aggressive",
+    "marginPercentage": 25,
+    "minPrice": 1,
+    "maxPrice": 10000,
+    "weights": {
+      "marketAverage": 0.3,
+      "competitorPricing": 0.4,
+      "historicalSales": 0.25,
+      "condition": 0.05
+    },
+    "advanced": {
+      "enableDynamicPricing": true,
+      "trendAnalysisDays": 21,
+      "trendAdjustmentFactor": 1.4,
+      "seasonalAdjustments": {
+        "enabled": true,
+        "peakSeasonMultiplier": 1.5,
+        "offSeasonMultiplier": 0.8
+      },
+      "competitiveThresholds": {
+        "competitiveThreshold": 0.03,
+        "premiumThreshold": 0.25
+      }
+    }
+  },
+  "keywords": {
+    "titleWeight": 0.5,
+    "descriptionWeight": 0.25,
+    "categoryWeight": 0.1,
+    "brandWeight": 0.1,
+    "conditionWeight": 0.05,
+    "minFrequencyThreshold": 1,
+    "maxKeywords": 35,
+    "trendingBoost": 1.8
+  },
+  "optimization": {
+    "contentStrategy": "seo_focused",
+    "titleOptimization": "keyword_heavy",
+    "descriptionStyle": "detailed",
+    "pricingApproach": "premium",
+    "targetAudience": "brand_conscious",
+    "goals": {
+      "maximizeVisibility": true,
+      "maximizeConversion": false,
+      "maximizeProfit": true
+    }
+  },
+  "templates": {
+    "customStyles": {
+      "primaryColor": "#6f42c1",
+      "secondaryColor": "#f8f9fa",
+      "fontFamily": "Segoe UI, Arial, sans-serif",
+      "fontSize": "15px",
+      "buttonColor": "#dc3545",
+      "borderRadius": "8px"
+    },
+    "imageGallery": {
+      "maxImages": 12,
+      "imageSize": "large",
+      "showThumbnails": true,
+      "enableZoom": true,
+      "layout": "masonry"
+    },
+    "formatting": {
+      "useMarkdown": true,
+      "includeBulletPoints": true,
+      "highlightKeyFeatures": true,
+      "addCallToAction": true,
+      "emphasizePrice": true,
+      "showConditionBadge": true,
+      "sectionDividers": true
+    },
+    "customization": {
+      "allowCustomCSS": true,
+      "enableThemes": true,
+      "availableThemes": ["modern", "premium", "dark"],
+      "customFields": ["warranty", "authenticity", "provenance"]
+    }
+  }
+}

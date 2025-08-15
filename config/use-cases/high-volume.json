@@ -1,0 +1,60 @@
+{
+  "name": "High Volume Processing",
+  "description": "Optimized for processing many listings quickly",
+  "scraping": {
+    "requestTimeout": 20000,
+    "requestDelay": 500,
+    "maxRetries": 2,
+    "maxConcurrentRequests": 15,
+    "useProxyRotation": true,
+    "proxyServers": []
+  },
+  "research": {
+    "maxSimilarListings": 10,
+    "historicalDataDays": 14,
+    "minConfidenceThreshold": 0.6,
+    "searchPlatforms": ["ebay"],
+    "insufficientDataHandling": {
+      "enableAutoExpansion": false,
+      "minListingsThreshold": 3,
+      "fallbackPlatforms": [],
+      "relaxExcludeKeywords": false,
+      "extendHistoricalDays": 21,
+      "fallbackConfidenceThreshold": 0.5
+    }
+  },
+  "pricing": {
+    "algorithm": "average",
+    "strategy": "moderate",
+    "marginPercentage": 15,
+    "advanced": {
+      "enableDynamicPricing": false,
+      "trendAnalysisDays": 7,
+      "trendAdjustmentFactor": 1.1
+    }
+  },
+  "keywords": {
+    "maxKeywords": 15,
+    "minFrequencyThreshold": 3,
+    "trendingBoost": 1.1
+  },
+  "templates": {
+    "imageGallery": {
+      "maxImages": 3,
+      "imageSize": "medium",
+      "showThumbnails": false,
+      "enableZoom": false,
+      "extraction": {
+        "validateUrls": false,
+        "validationTimeout": 2000,
+        "retryAttempts": 1
+      }
+    },
+    "formatting": {
+      "includeBulletPoints": true,
+      "highlightKeyFeatures": false,
+      "addCallToAction": false,
+      "sectionDividers": false
+    }
+  }
+}

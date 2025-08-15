@@ -1,0 +1,100 @@
+{
+  "name": "Seller Preset",
+  "description": "Balanced settings for regular eBay sellers",
+  "scraping": {
+    "requestTimeout": 45000,
+    "requestDelay": 1500,
+    "maxRetries": 5,
+    "maxConcurrentRequests": 5,
+    "useProxyRotation": false,
+    "proxyServers": [],
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+  },
+  "research": {
+    "maxSimilarListings": 30,
+    "historicalDataDays": 45,
+    "minConfidenceThreshold": 0.75,
+    "searchPlatforms": ["ebay", "amazon"],
+    "excludeKeywords": ["broken", "damaged", "parts", "repair", "untested"],
+    "dataSourceWeights": { "ebay": 0.7, "amazon": 0.3, "other": 0.0 },
+    "insufficientDataHandling": {
+      "enableAutoExpansion": true,
+      "minListingsThreshold": 8,
+      "fallbackPlatforms": ["etsy", "mercari"],
+      "relaxExcludeKeywords": true,
+      "extendHistoricalDays": 75,
+      "fallbackConfidenceThreshold": 0.6
+    }
+  },
+  "pricing": {
+    "algorithm": "competitive",
+    "strategy": "moderate",
+    "marginPercentage": 18,
+    "minPrice": 5,
+    "maxPrice": 2000,
+    "weights": {
+      "marketAverage": 0.4,
+      "competitorPricing": 0.35,
+      "historicalSales": 0.2,
+      "condition": 0.05
+    },
+    "advanced": {
+      "enableDynamicPricing": true,
+      "trendAnalysisDays": 14,
+      "trendAdjustmentFactor": 1.2,
+      "seasonalAdjustments": {
+        "enabled": true,
+        "peakSeasonMultiplier": 1.25,
+        "offSeasonMultiplier": 0.9
+      },
+      "competitiveThresholds": {
+        "competitiveThreshold": 0.05,
+        "premiumThreshold": 0.15
+      }
+    }
+  },
+  "keywords": {
+    "titleWeight": 0.45,
+    "descriptionWeight": 0.25,
+    "categoryWeight": 0.15,
+    "brandWeight": 0.1,
+    "conditionWeight": 0.05,
+    "minFrequencyThreshold": 2,
+    "maxKeywords": 25,
+    "trendingBoost": 1.3
+  },
+  "optimization": {
+    "contentStrategy": "conversion_focused",
+    "titleOptimization": "keyword_heavy",
+    "descriptionStyle": "bullet_points",
+    "pricingApproach": "competitive",
+    "targetAudience": "bargain_hunters",
+    "goals": {
+      "maximizeVisibility": true,
+      "maximizeConversion": true,
+      "maximizeProfit": true
+    }
+  },
+  "templates": {
+    "customStyles": {
+      "primaryColor": "#28a745",
+      "secondaryColor": "#f8f9fa",
+      "fontFamily": "Arial, sans-serif",
+      "fontSize": "14px",
+      "buttonColor": "#007bff"
+    },
+    "imageGallery": {
+      "maxImages": 8,
+      "imageSize": "large",
+      "showThumbnails": true,
+      "enableZoom": true
+    },
+    "formatting": {
+      "useMarkdown": false,
+      "includeBulletPoints": true,
+      "highlightKeyFeatures": true,
+      "addCallToAction": true,
+      "emphasizePrice": true
+    }
+  }
+}

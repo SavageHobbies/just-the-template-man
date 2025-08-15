@@ -1,0 +1,135 @@
+{
+  "environment": "production",
+  "scraping": {
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+    "timeout": 30000,
+    "retryAttempts": 3,
+    "retryDelay": 2000,
+    "respectRobotsTxt": true,
+    "rateLimit": {
+      "enabled": true,
+      "requestsPerMinute": 30,
+      "burstLimit": 10
+    },
+    "headers": {
+      "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+      "Accept-Language": "en-US,en;q=0.5",
+      "Accept-Encoding": "gzip, deflate",
+      "DNT": "1",
+      "Connection": "keep-alive",
+      "Upgrade-Insecure-Requests": "1"
+    }
+  },
+  "extraction": {
+    "imageValidation": {
+      "enabled": true,
+      "timeout": 5000,
+      "maxRetries": 2
+    },
+    "fallbackStrategies": {
+      "enabled": true,
+      "maxAttempts": 3
+    },
+    "dataValidation": {
+      "strictMode": true,
+      "requiredFields": ["title", "price", "condition"]
+    }
+  },
+  "research": {
+    "similarProductsLimit": 20,
+    "priceAnalysis": {
+      "confidenceThreshold": 0.7,
+      "outlierRemoval": true,
+      "weightRecentSales": true
+    },
+    "keywordAnalysis": {
+      "minFrequency": 2,
+      "maxKeywords": 15,
+      "excludeCommonWords": true
+    },
+    "caching": {
+      "enabled": true,
+      "ttl": 3600000,
+      "maxSize": 1000
+    }
+  },
+  "optimization": {
+    "title": {
+      "maxLength": 80,
+      "includeKeywords": true,
+      "preserveOriginalBrand": true
+    },
+    "description": {
+      "maxLength": 1000,
+      "includeSellingPoints": true,
+      "seoOptimized": true
+    },
+    "pricing": {
+      "strategy": "competitive",
+      "marginPercentage": 5,
+      "roundToNearestDollar": true
+    }
+  },
+  "template": {
+    "imageGallery": {
+      "maxImages": 5,
+      "preferHighResolution": true,
+      "lazyLoading": true
+    },
+    "responsive": true,
+    "accessibility": {
+      "altText": true,
+      "headingHierarchy": true,
+      "colorContrast": true
+    }
+  },
+  "logging": {
+    "level": "info",
+    "format": "json",
+    "includeTimestamp": true,
+    "includeMetadata": true,
+    "performance": {
+      "enabled": true,
+      "trackOperations": true
+    }
+  },
+  "performance": {
+    "monitoring": {
+      "enabled": true,
+      "trackMemoryUsage": true,
+      "trackExecutionTime": true
+    },
+    "limits": {
+      "maxConcurrentRequests": 5,
+      "maxMemoryUsageMB": 512,
+      "maxExecutionTimeMs": 60000
+    }
+  },
+  "security": {
+    "validateUrls": true,
+    "sanitizeInput": true,
+    "preventXSS": true,
+    "allowedDomains": [
+      "ebay.com",
+      "ebay.co.uk",
+      "ebay.de",
+      "ebay.fr",
+      "ebay.it",
+      "ebay.es",
+      "ebay.ca",
+      "ebay.com.au"
+    ]
+  },
+  "features": {
+    "webScraping": true,
+    "productExtraction": true,
+    "marketResearch": true,
+    "contentOptimization": true,
+    "templateGeneration": true,
+    "imageProcessing": true,
+    "caching": true,
+    "performanceMonitoring": true,
+    "errorRecovery": true,
+    "configurationManagement": true
+  }
+}

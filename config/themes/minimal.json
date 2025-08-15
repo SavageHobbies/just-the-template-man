@@ -1,0 +1,49 @@
+{
+  "name": "Minimal Theme",
+  "description": "Clean, minimalist design focusing on content",
+  "customStyles": {
+    "primaryColor": "#000000",
+    "secondaryColor": "#ffffff",
+    "fontFamily": "system-ui, -apple-system, sans-serif",
+    "fontSize": "15px",
+    "borderRadius": "0px",
+    "boxShadow": "none",
+    "headerBackground": "#ffffff",
+    "textColor": "#000000",
+    "linkColor": "#000000",
+    "buttonColor": "#000000",
+    "warningColor": "#666666",
+    "errorColor": "#000000",
+    "successColor": "#000000"
+  },
+  "layout": {
+    "containerWidth": "100%",
+    "maxWidth": "800px",
+    "padding": "32px",
+    "margin": "0 auto",
+    "responsive": true,
+    "mobileBreakpoint": "768px",
+    "gridGap": "32px"
+  },
+  "imageGallery": {
+    "layout": "stack",
+    "aspectRatio": "16:9",
+    "spacing": "24px",
+    "borderRadius": "0px",
+    "hoverEffect": "none",
+    "border": "1px solid #e5e5e5"
+  },
+  "typography": {
+    "headingFont": "system-ui, sans-serif",
+    "bodyFont": "system-ui, sans-serif",
+    "headingWeight": "400",
+    "bodyWeight": "300",
+    "lineHeight": "1.8",
+    "letterSpacing": "0.01em"
+  },
+  "animations": {
+    "enabled": false,
+    "duration": "0s",
+    "easing": "linear"
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "name": "Modern Theme",
+  "description": "Clean, contemporary design with modern typography",
+  "customStyles": {
+    "primaryColor": "#2563eb",
+    "secondaryColor": "#f8fafc",
+    "fontFamily": "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+    "fontSize": "16px",
+    "borderRadius": "12px",
+    "boxShadow": "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+    "headerBackground": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+    "textColor": "#1e293b",
+    "linkColor": "#2563eb",
+    "buttonColor": "#3b82f6",
+    "warningColor": "#f59e0b",
+    "errorColor": "#ef4444",
+    "successColor": "#10b981"
+  },
+  "layout": {
+    "containerWidth": "100%",
+    "maxWidth": "1200px",
+    "padding": "24px",
+    "margin": "0 auto",
+    "responsive": true,
+    "mobileBreakpoint": "768px",
+    "gridGap": "24px"
+  },
+  "imageGallery": {
+    "layout": "grid",
+    "aspectRatio": "4:3",
+    "spacing": "16px",
+    "borderRadius": "12px",
+    "hoverEffect": "scale",
+    "transitionDuration": "0.3s"
+  },
+  "typography": {
+    "headingFont": "Inter, sans-serif",
+    "bodyFont": "Inter, sans-serif",
+    "headingWeight": "700",
+    "bodyWeight": "400",
+    "lineHeight": "1.6",
+    "letterSpacing": "-0.025em"
+  },
+  "animations": {
+    "enabled": true,
+    "duration": "0.3s",
+    "easing": "cubic-bezier(0.4, 0, 0.2, 1)"
+  }
+}

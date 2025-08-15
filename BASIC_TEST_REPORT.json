@@ -1,0 +1,20 @@
+{
+  "timestamp": "2025-08-14T22:31:50.341Z",
+  "system": {
+    "node": "v22.17.0",
+    "platform": "win32",
+    "arch": "x64"
+  },
+  "tests": {
+    "build": true,
+    "cli": true,
+    "configuration": true,
+    "template": true
+  },
+  "summary": {
+    "total": 4,
+    "passed": 4,
+    "failed": 0
+  },
+  "status": "PASSED"
+}

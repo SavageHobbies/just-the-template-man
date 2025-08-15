@@ -1,0 +1,52 @@
+{
+  "scraping": {
+    "requestTimeout": 45000,
+    "requestDelay": 1500,
+    "maxRetries": 5
+  },
+  "research": {
+    "maxSimilarListings": 30,
+    "historicalDataDays": 45,
+    "minConfidenceThreshold": 0.8
+  },
+  "pricing": {
+    "strategy": "aggressive",
+    "marginPercentage": 20
+  },
+  "keywords": {
+    "maxKeywords": 25,
+    "trendingBoost": 1.5
+  },
+  "templates": {
+    "defaultTemplate": "final-ebay-template.html",
+    "customStyles": {
+      "primaryColor": "#ff6600",
+      "secondaryColor": "#ffffff"
+    },
+    "imageGallery": {
+      "maxImages": 8,
+      "imageSize": "large",
+      "enableZoom": true
+    }
+  },
+  "optimization": {
+    "contentStrategy": "seo_focused",
+    "titleOptimization": "keyword_heavy",
+    "targetAudience": "bargain_hunters",
+    "goals": {
+      "maximizeVisibility": true,
+      "maximizeConversion": false,
+      "maximizeProfit": true
+    }
+  },
+  "userPreferences": {
+    "language": "en",
+    "currency": "USD",
+    "timezone": "America/New_York",
+    "notifications": {
+      "emailUpdates": true,
+      "priceAlerts": true,
+      "marketTrends": true
+    }
+  }
+}

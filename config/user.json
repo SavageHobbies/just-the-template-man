@@ -1,0 +1,121 @@
+{
+  "scraping": {
+    "requestTimeout": 60000,
+    "requestDelay": 1000,
+    "maxRetries": 5,
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+    "useProxyRotation": false,
+    "proxyServers": [],
+    "maxConcurrentRequests": 5
+  },
+  "research": {
+    "maxSimilarListings": 20,
+    "historicalDataDays": 30,
+    "minConfidenceThreshold": 0.7,
+    "searchPlatforms": [
+      "ebay",
+      "amazon"
+    ],
+    "excludeKeywords": [
+      "broken",
+      "damaged",
+      "parts",
+      "repair"
+    ],
+    "dataSourceWeights": {
+      "ebay": 0.6,
+      "amazon": 0.3,
+      "other": 0.1
+    }
+  },
+  "pricing": {
+    "algorithm": "competitive",
+    "strategy": "moderate",
+    "marginPercentage": 15,
+    "minPrice": 1,
+    "maxPrice": 10000,
+    "weights": {
+      "marketAverage": 0.4,
+      "competitorPricing": 0.3,
+      "historicalSales": 0.2,
+      "condition": 0.1
+    }
+  },
+  "keywords": {
+    "titleWeight": 0.4,
+    "descriptionWeight": 0.3,
+    "categoryWeight": 0.1,
+    "brandWeight": 0.1,
+    "conditionWeight": 0.1,
+    "minFrequencyThreshold": 2,
+    "maxKeywords": 20,
+    "trendingBoost": 1.2
+  },
+  "templates": {
+    "defaultTemplate": "final-ebay-template.html",
+    "availableTemplates": [
+      "final-ebay-template.html",
+      "product-listing-template.html"
+    ],
+    "customStyles": {
+      "primaryColor": "#0066cc",
+      "secondaryColor": "#f5f5f5",
+      "fontFamily": "Arial, sans-serif",
+      "fontSize": "14px"
+    },
+    "imageGallery": {
+      "maxImages": 5,
+      "imageSize": "medium",
+      "showThumbnails": true,
+      "enableZoom": false
+    },
+    "formatting": {
+      "useMarkdown": false,
+      "includeBulletPoints": true,
+      "highlightKeyFeatures": true,
+      "addCallToAction": true
+    }
+  },
+  "optimization": {
+    "contentStrategy": "balanced",
+    "titleOptimization": "readable",
+    "descriptionStyle": "detailed",
+    "pricingApproach": "competitive",
+    "targetAudience": "quality_seekers",
+    "goals": {
+      "maximizeVisibility": true,
+      "maximizeConversion": true,
+      "maximizeProfit": false
+    }
+  },
+  "userPreferences": {
+    "language": "en",
+    "currency": "USD",
+    "timezone": "UTC",
+    "notifications": {
+      "emailUpdates": false,
+      "priceAlerts": true,
+      "marketTrends": true
+    },
+    "defaultOptimization": {
+      "contentStrategy": "balanced",
+      "titleOptimization": "readable",
+      "descriptionStyle": "detailed",
+      "pricingApproach": "competitive",
+      "targetAudience": "quality_seekers",
+      "goals": {
+        "maximizeVisibility": true,
+        "maximizeConversion": true,
+        "maximizeProfit": false
+      }
+    },
+    "templatePreferences": {
+      "favoriteTemplates": [
+        "final-ebay-template.html"
+      ],
+      "customTemplates": []
+    }
+  },
+  "version": "1.0.0",
+  "lastUpdated": "2025-08-14T18:58:24.318Z"
+}
