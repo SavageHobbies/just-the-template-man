@@ -4,14 +4,10 @@ import { WebpageContent, ProductDetails, ImageData } from '../models';
 import { 
   validateProductDetails, 
   formatPrice,
-  ProductExtractionError,
-  ErrorCode,
-  getLogger,
-  PerformanceMonitor
+  getLogger
 } from '../utils';
 import { imageValidationCache } from '../utils/cache';
 import { imageValidationThrottler } from '../utils/rate-limiter';
-import { performanceMonitor, monitor } from '../utils/performance-monitor';
 import { ParallelProcessor } from '../utils/batch-processor';
 import axios from 'axios';
 
@@ -274,16 +270,140 @@ export class EbayProductExtractor implements ProductExtractor {
   }
 
   /**
-   * Extracts product images from the listing and returns ImageData array
+   * Extracts the main product image from the listing
+   * Simply returns the first/main image found without complex gallery logic
    */
   private async extractImages($: cheerio.CheerioAPI): Promise<ImageData[]> {
-    const images = await this.extractImageGallery({ 
-      html: $.html(), 
-      title: '', 
-      metadata: {}, 
-      timestamp: new Date() 
-    });
-    return images;
+    // Extract title for potential UPC lookup (keeping for data purposes)
+    const title = this.extractTitle($);
+    
+    // Try to find UPC in the page content for data purposes
+    const upcMatch = this.extractUPCFromContent($, title);
+    const upc = upcMatch ? upcMatch[0] : undefined;
+    
+    this.logger.info(`Extracted UPC: ${upc || 'No UPC found'}`);
+    
+    // Simply extract the main image without complex stock image lookup
+    const mainImage = this.extractMainImage($);
+    
+    if (mainImage) {
+      this.logger.info(`✅ Found main image: ${mainImage.url}`);
+      return [mainImage];
+    }
+    
+    this.logger.warn('No main image found, using placeholder');
+    
+    // Final fallback: return a placeholder image
+    return [{
+      url: 'https://via.placeholder.com/400x300/4A90E2/FFFFFF?text=Product+Image',
+      altText: title || 'Product Image',
+      size: 'large',
+      isValid: true
+    }];
+  }
+
+  /**
+   * Extracts the main product image from the page
+   * Simply returns the first/main image found without complex gallery logic
+   */
+  private extractMainImage($: cheerio.CheerioAPI): ImageData | null {
+    // Main image selectors in order of priority
+    const mainImageSelectors = [
+      'img[data-testid="ux-image-carousel-item"]',  // Modern main image
+      'img[data-zoom-src]',                        // Zoom image (usually main)
+      '#icImg',                                    // Classic main image
+      '#image',                                    // Generic image id
+      '.img img',                                  // Image in img container
+      '.image img',                                // Image in image container
+      'img[src*="ebayimg.com"]:first',             // First eBay image
+      'img[src*="i.ebayimg.com"]:first'            // First i.ebayimg.com image
+    ];
+
+    for (const selector of mainImageSelectors) {
+      const element = $(selector).first();
+      if (element.length > 0) {
+        const $img = $(element);
+        
+        // Try multiple attributes for image URL
+        const possibleUrls = [
+          $img.attr('data-zoom-src'),
+          $img.attr('data-src'),
+          $img.attr('src')
+        ].filter(Boolean);
+
+        for (const url of possibleUrls) {
+          if (url && this.isValidImageUrl(url)) {
+            // Convert to high-resolution URL if possible
+            const highResUrl = this.convertToHighResolution(url);
+            
+            return {
+              url: highResUrl,
+              altText: $img.attr('alt') || undefined,
+              size: this.determineImageSize(highResUrl),
+              isValid: true // Will be validated later
+            };
+          }
+        }
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Extracts UPC code from eBay page content using multiple strategies
+   */
+  private extractUPCFromContent($: cheerio.CheerioAPI, title: string): RegExpMatchArray | null {
+    // Strategy 1: Look for UPC in the title
+    let upcMatch = title.match(/\b\d{12,13}\b/);
+    if (upcMatch) {
+      return upcMatch;
+    }
+    
+    // Strategy 2: Look for UPC in item specifics
+    const itemSpecifics = this.extractSpecifications($);
+    const specificValues = Object.values(itemSpecifics).join(' ');
+    upcMatch = specificValues.match(/\b\d{12,13}\b/);
+    if (upcMatch) {
+      return upcMatch;
+    }
+    
+    // Strategy 3: Look for UPC in description
+    const description = this.extractDescription($);
+    upcMatch = description.match(/\b\d{12,13}\b/);
+    if (upcMatch) {
+      return upcMatch;
+    }
+    
+    // Strategy 4: Look for UPC in any text content
+    const bodyText = $('body').text();
+    upcMatch = bodyText.match(/\b\d{12,13}\b/);
+    if (upcMatch) {
+      return upcMatch;
+    }
+    
+    // Strategy 5: Look for UPC in meta tags or structured data
+    const structuredData = $('script[type="application/ld+json"]').text();
+    if (structuredData) {
+      try {
+        const json = JSON.parse(structuredData);
+        // Look for UPC in various structured data properties
+        const upcFields = ['upc', 'gtin13', 'gtin', 'productID', 'productId'];
+        for (const field of upcFields) {
+          if (json[field] && json[field].toString().match(/^\d{12,13}$/)) {
+            return json[field].toString().match(/\b\d{12,13}\b/);
+          }
+          // Check nested properties
+          if (json.offers && json.offers[field] && json.offers[field].toString().match(/^\d{12,13}$/)) {
+            return json.offers[field].toString().match(/\b\d{12,13}\b/);
+          }
+        }
+      } catch (e) {
+        // Ignore JSON parsing errors
+      }
+    }
+    
+    return null;
   }
 
   /**
@@ -478,12 +598,17 @@ export class EbayProductExtractor implements ProductExtractor {
 
     // Fallback image extraction if no images found
     if (!result.images || result.images.length === 0) {
-      result.images = await this.extractImageGallery({ 
-        html: $.html(), 
-        title: '', 
-        metadata: {}, 
-        timestamp: new Date() 
-      });
+      const mainImage = this.extractMainImage($);
+      if (mainImage) {
+        result.images = [mainImage];
+      } else {
+        result.images = [{
+          url: 'https://via.placeholder.com/400x300/4A90E2/FFFFFF?text=Product+Image',
+          altText: result.title || 'Product Image',
+          size: 'large',
+          isValid: true
+        }];
+      }
     }
 
     return result;
@@ -587,6 +712,8 @@ export class EbayProductExtractor implements ProductExtractor {
     const imageDataArray: ImageData[] = [];
     const seenUrls = new Set<string>();
 
+    this.logger.info('Starting image extraction from eBay page...');
+
     // eBay image gallery selectors in order of priority
     const imageSelectors = [
       // Modern eBay gallery selectors
@@ -617,9 +744,16 @@ export class EbayProductExtractor implements ProductExtractor {
       'img[class*="image"]'
     ];
 
+    let totalImagesFound = 0;
+
     // Extract images from each selector
     for (const selector of imageSelectors) {
-      $(selector).each((_, element) => {
+      const elements = $(selector);
+      if (elements.length > 0) {
+        this.logger.debug(`Found ${elements.length} images with selector: ${selector}`);
+      }
+      
+      elements.each((_, element) => {
         const $img = $(element);
         
         // Try multiple attributes for image URL
@@ -634,6 +768,7 @@ export class EbayProductExtractor implements ProductExtractor {
         for (const url of possibleUrls) {
           if (url && this.isValidImageUrl(url) && !seenUrls.has(url)) {
             seenUrls.add(url);
+            totalImagesFound++;
             
             // Convert to high-resolution URL if possible
             const highResUrl = this.convertToHighResolution(url);
@@ -646,10 +781,14 @@ export class EbayProductExtractor implements ProductExtractor {
             };
             
             imageDataArray.push(imageData);
+            
+            this.logger.debug(`Found image: ${highResUrl.substring(0, 80)}...`);
           }
         }
       });
     }
+
+    this.logger.info(`Found ${totalImagesFound} total images before processing`);
 
     // Remove duplicates and prioritize high-resolution images
     const uniqueImages = this.deduplicateImages(imageDataArray);
@@ -660,8 +799,14 @@ export class EbayProductExtractor implements ProductExtractor {
     // Return top 5 images
     const topImages = sortedImages.slice(0, 5);
     
+    this.logger.info(`Selected ${topImages.length} images for validation`);
+    
     // Validate URLs
-    return await this.validateImageUrls(topImages);
+    const validatedImages = await this.validateImageUrls(topImages);
+    
+    this.logger.info(`Validation complete: ${validatedImages.filter(img => img.isValid).length} of ${validatedImages.length} images are valid`);
+    
+    return validatedImages;
   }
 
   /**

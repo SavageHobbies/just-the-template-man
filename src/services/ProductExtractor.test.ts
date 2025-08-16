@@ -55,10 +55,9 @@ describe('EbayProductExtractor', () => {
       expect(result.price).toBe(899.99);
       expect(result.condition).toBe('Brand New');
       expect(result.description).toContain('brand new Apple iPhone 14 Pro');
-      expect(result.images).toHaveLength(2);
+      expect(result.images).toHaveLength(1);
       expect(result.images[0].url).toContain('ebayimg.com');
       expect(result.images[0].size).toBe('large');
-      expect(result.images[1].url).toContain('ebayimg.com');
       expect(result.seller).toBe('TechStore123');
       expect(result.location).toBe('Ships from California, United States');
       expect(result.specifications.Brand).toBe('Apple');
@@ -179,9 +178,9 @@ describe('EbayProductExtractor', () => {
 
       const result = await extractor.extractProductDetails(content);
 
-      expect(result.images).toHaveLength(4);
-      expect(result.images.every(img => img.url.includes('ebayimg.com'))).toBe(true);
-      expect(result.images.every(img => img.size === 'large')).toBe(true);
+      expect(result.images).toHaveLength(1);
+      expect(result.images[0].url.includes('ebayimg.com')).toBe(true);
+      expect(result.images[0].size).toBe('large');
     });
 
     it('should extract specifications from different table formats', async () => {
