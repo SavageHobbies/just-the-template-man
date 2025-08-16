@@ -1,17 +1,17 @@
 {
   "scraping": {
-    "requestTimeout": 60000,
-    "requestDelay": 1000,
+    "requestTimeout": 45000,
+    "requestDelay": 1500,
     "maxRetries": 5,
-    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
     "useProxyRotation": false,
     "proxyServers": [],
     "maxConcurrentRequests": 5
   },
   "research": {
-    "maxSimilarListings": 20,
-    "historicalDataDays": 30,
-    "minConfidenceThreshold": 0.7,
+    "maxSimilarListings": 30,
+    "historicalDataDays": 45,
+    "minConfidenceThreshold": 0.75,
     "searchPlatforms": [
       "ebay",
       "amazon"
@@ -20,25 +20,51 @@
       "broken",
       "damaged",
       "parts",
-      "repair"
+      "repair",
+      "untested"
     ],
     "dataSourceWeights": {
-      "ebay": 0.6,
+      "ebay": 0.7,
       "amazon": 0.3,
-      "other": 0.1
+      "other": 0
+    },
+    "insufficientDataHandling": {
+      "enableAutoExpansion": true,
+      "minListingsThreshold": 8,
+      "fallbackPlatforms": [
+        "etsy",
+        "mercari"
+      ],
+      "relaxExcludeKeywords": true,
+      "extendHistoricalDays": 75,
+      "fallbackConfidenceThreshold": 0.6
     }
   },
   "pricing": {
     "algorithm": "competitive",
     "strategy": "moderate",
-    "marginPercentage": 15,
-    "minPrice": 1,
-    "maxPrice": 10000,
+    "marginPercentage": 18,
+    "minPrice": 5,
+    "maxPrice": 2000,
     "weights": {
       "marketAverage": 0.4,
-      "competitorPricing": 0.3,
+      "competitorPricing": 0.35,
       "historicalSales": 0.2,
-      "condition": 0.1
+      "condition": 0.05
+    },
+    "advanced": {
+      "enableDynamicPricing": true,
+      "trendAnalysisDays": 14,
+      "trendAdjustmentFactor": 1.2,
+      "seasonalAdjustments": {
+        "enabled": false,
+        "peakSeasonMultiplier": 1.2,
+        "offSeasonMultiplier": 0.9
+      },
+      "competitiveThresholds": {
+        "competitiveThreshold": 0.05,
+        "premiumThreshold": 0.15
+      }
     }
   },
   "keywords": {
@@ -61,31 +87,111 @@
       "primaryColor": "#0066cc",
       "secondaryColor": "#f5f5f5",
       "fontFamily": "Arial, sans-serif",
-      "fontSize": "14px"
+      "fontSize": "14px",
+      "borderRadius": "4px",
+      "boxShadow": "0 2px 4px rgba(0,0,0,0.1)",
+      "headerBackground": "#f8f9fa",
+      "textColor": "#333333",
+      "linkColor": "#0066cc",
+      "buttonColor": "#28a745",
+      "warningColor": "#ffc107",
+      "errorColor": "#dc3545"
+    },
+    "layout": {
+      "containerWidth": "100%",
+      "maxWidth": "1200px",
+      "padding": "20px",
+      "margin": "0 auto",
+      "responsive": true,
+      "mobileBreakpoint": "768px"
     },
     "imageGallery": {
       "maxImages": 5,
       "imageSize": "medium",
       "showThumbnails": true,
-      "enableZoom": false
+      "enableZoom": false,
+      "layout": "grid",
+      "aspectRatio": "1:1",
+      "spacing": "10px",
+      "borderRadius": "8px",
+      "extraction": {
+        "prioritizeHighRes": true,
+        "minDimensions": {
+          "width": 300,
+          "height": 300
+        },
+        "qualityPreferences": [
+          "/s-l1600.jpg",
+          "/s-l800.jpg",
+          "/s-l500.jpg"
+        ],
+        "validateUrls": true,
+        "validationTimeout": 5000,
+        "fallbackSources": [
+          "main-image",
+          "gallery-images",
+          "thumbnail-images"
+        ],
+        "retryAttempts": 3,
+        "cacheImages": true
+      }
     },
     "formatting": {
       "useMarkdown": false,
       "includeBulletPoints": true,
       "highlightKeyFeatures": true,
-      "addCallToAction": true
+      "addCallToAction": true,
+      "sectionDividers": true,
+      "emphasizePrice": true,
+      "showConditionBadge": true,
+      "includeShippingInfo": true,
+      "addReturnPolicy": true
+    },
+    "customization": {
+      "allowCustomCSS": true,
+      "allowCustomHTML": false,
+      "enableThemes": true,
+      "availableThemes": [
+        "default",
+        "modern",
+        "classic",
+        "minimal"
+      ],
+      "customFields": [],
+      "hiddenSections": [],
+      "sectionOrder": [
+        "title",
+        "images",
+        "description",
+        "specifications",
+        "shipping",
+        "returns"
+      ]
+    },
+    "typography": {
+      "headingFont": "Arial, sans-serif",
+      "bodyFont": "Arial, sans-serif",
+      "headingWeight": "bold",
+      "bodyWeight": "normal",
+      "lineHeight": "1.5",
+      "letterSpacing": "normal"
+    },
+    "animations": {
+      "enabled": false,
+      "duration": "0.3s",
+      "easing": "ease-in-out"
     }
   },
   "optimization": {
-    "contentStrategy": "balanced",
-    "titleOptimization": "readable",
-    "descriptionStyle": "detailed",
+    "contentStrategy": "conversion_focused",
+    "titleOptimization": "keyword_heavy",
+    "descriptionStyle": "bullet_points",
     "pricingApproach": "competitive",
-    "targetAudience": "quality_seekers",
+    "targetAudience": "bargain_hunters",
     "goals": {
       "maximizeVisibility": true,
       "maximizeConversion": true,
-      "maximizeProfit": false
+      "maximizeProfit": true
     }
   },
   "userPreferences": {
@@ -117,5 +223,5 @@
     }
   },
   "version": "1.0.0",
-  "lastUpdated": "2025-08-14T18:58:24.318Z"
+  "lastUpdated": "2025-08-15T15:38:19.077Z"
 }

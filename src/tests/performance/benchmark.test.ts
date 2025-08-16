@@ -209,8 +209,7 @@ describe('Performance Benchmarks', () => {
         optimizedDescription: 'Test Description',
         suggestedPrice: 100,
         keywords: ['test', 'keywords'],
-        sellingPoints: ['Test point'],
-        conditionNotes: 'Test condition'
+        sellingPoints: ['Test point']
       };
       const mockProductDetails = {
         title: 'Test',

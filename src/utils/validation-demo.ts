@@ -61,8 +61,7 @@ export function demonstrateValidation() {
       'Latest M2 Pro chip for ultimate performance',
       'Large 512GB SSD storage',
       'Perfect for professionals and creators'
-    ],
-    conditionNotes: 'Brand new in sealed original packaging'
+    ]
   };
 
   // Validate high-quality listing
@@ -127,8 +126,7 @@ export function demonstrateValidation() {
     optimizedDescription: 'laptop available',
     suggestedPrice: 60,
     keywords: ['laptop'],
-    sellingPoints: ['works'],
-    conditionNotes: 'used'
+    sellingPoints: ['works']
   };
 
   // Validate poor-quality listing

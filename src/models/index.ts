@@ -66,7 +66,6 @@ export interface OptimizedContent {
   suggestedPrice: number;
   keywords: string[];
   sellingPoints: string[];
-  conditionNotes: string;
 }
 
 export interface PricingInsight {

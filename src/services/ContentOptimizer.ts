@@ -38,17 +38,13 @@ export class ContentOptimizer implements IContentOptimizer {
     // Generate selling points from research and original details
     const sellingPoints = this.generateSellingPoints(originalDetails, research);
 
-    // Create detailed condition notes
-    const conditionNotes = this.generateConditionNotes(originalDetails);
-
     // Validate generated content consistency
     this.validateContentConsistency(originalDetails, {
       optimizedTitle,
       optimizedDescription,
       suggestedPrice,
       keywords,
-      sellingPoints,
-      conditionNotes
+      sellingPoints
     });
 
     return {
@@ -56,8 +52,7 @@ export class ContentOptimizer implements IContentOptimizer {
       optimizedDescription,
       suggestedPrice,
       keywords,
-      sellingPoints,
-      conditionNotes
+      sellingPoints
     };
   }
 
@@ -291,20 +286,6 @@ export class ContentOptimizer implements IContentOptimizer {
     return `${benefitsIntro}\n${benefitsList}`;
   }
 
-  private generateConditionSection(condition: string): string {
-    const conditionMap: Record<string, string> = {
-      'new': 'Brand new in original packaging - never used or opened.',
-      'like new': 'Excellent condition - appears unused with minimal signs of handling.',
-      'very good': 'Great condition - minor cosmetic wear but fully functional.',
-      'good': 'Good working condition - some signs of use but well-maintained.',
-      'acceptable': 'Functional condition - shows wear but operates as intended.'
-    };
-
-    const conditionKey = condition.toLowerCase();
-    const conditionDescription = conditionMap[conditionKey] || `Condition: ${condition}`;
-
-    return `Condition: ${conditionDescription}`;
-  }
 
   private generateCompetitiveAdvantages(originalDetails: ProductDetails, similarListings: any[]): string {
     if (similarListings.length === 0) {
@@ -474,36 +455,10 @@ export class ContentOptimizer implements IContentOptimizer {
     return sellingPoints.slice(0, 6); // Limit to 6 selling points
   }
 
-  private generateConditionNotes(originalDetails: ProductDetails): string {
-    const { condition, description } = originalDetails;
-
-    // Extract condition-related information from description
-    const conditionKeywords = ['condition', 'wear', 'scratch', 'dent', 'damage', 'flaw', 'defect', 'issue'];
-    const sentences = description.split(/[.!?]+/);
-    
-    const conditionSentences = sentences.filter(sentence => {
-      const lowerSentence = sentence.toLowerCase();
-      return conditionKeywords.some(keyword => lowerSentence.includes(keyword));
-    });
-
-    let conditionNotes = `Item condition: ${condition}`;
-
-    if (conditionSentences.length > 0) {
-      conditionNotes += '\n\nCondition Details:\n';
-      conditionSentences.forEach(sentence => {
-        conditionNotes += `• ${sentence.trim()}\n`;
-      });
-    }
-
-    // Add standard condition disclaimer
-    conditionNotes += '\nPlease review all photos carefully. Item is sold as described with no hidden defects.';
-
-    return conditionNotes;
-  }
 
   private validateContentConsistency(originalDetails: ProductDetails, optimizedContent: OptimizedContent): void {
-    const { title, price, condition } = originalDetails;
-    const { optimizedTitle, suggestedPrice, conditionNotes } = optimizedContent;
+    const { title, price } = originalDetails;
+    const { optimizedTitle, suggestedPrice } = optimizedContent;
 
     // Validate title consistency - should contain core product information
     const originalWords = this.extractWordsFromTitle(title);
@@ -521,11 +476,6 @@ export class ContentOptimizer implements IContentOptimizer {
     const priceChange = Math.abs(suggestedPrice - price) / price;
     if (priceChange > 0.5) {
       throw new Error('Suggested price change is too dramatic - may indicate inconsistency');
-    }
-
-    // Validate condition consistency
-    if (!conditionNotes.toLowerCase().includes(condition.toLowerCase())) {
-      throw new Error('Condition notes must reference the original condition');
     }
 
     // Validate title length

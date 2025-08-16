@@ -377,9 +377,11 @@ class EbayOptimizerUI {
 
     displayRealImages(images) {
         const productImagesContainer = document.getElementById('productImages');
+        const imageUrlsContainer = document.getElementById('imageUrlsContainer');
         
         if (!images || images.length === 0) {
             productImagesContainer.innerHTML = '<p style="color: #64748b; font-size: 0.875rem;">No images found in listing</p>';
+            imageUrlsContainer.innerHTML = '<p style="color: #64748b; font-size: 0.875rem;">No image URLs available</p>';
             return;
         }
 
@@ -390,6 +392,26 @@ class EbayOptimizerUI {
                 <div class="product-image ${isMain ? 'main' : ''}" title="${image.altText}">
                     <img src="${image.url}" alt="${image.altText}" loading="lazy" 
                          onerror="this.parentElement.style.display='none'">
+                </div>
+            `;
+        }).join('');
+
+        // Display image URLs with one-click copy functionality
+        imageUrlsContainer.innerHTML = images.map((image, index) => {
+            const isMain = image.type === 'main' || index === 0;
+            const imageType = isMain ? 'Main Image' : `Gallery Image ${index}`;
+            return `
+                <div class="image-url-item">
+                    <div class="image-url-header">
+                        <span class="image-type">${imageType}</span>
+                        <button class="copy-url-btn" onclick="navigator.clipboard.writeText('${image.url}').then(() => this.innerHTML='<i class=\"fas fa-check\"></i> Copied!').catch(() => {});">
+                            <i class="fas fa-copy"></i> Copy URL
+                        </button>
+                    </div>
+                    <div class="image-url-preview">
+                        <img src="${image.url}" alt="${imageType}" onerror="this.style.display='none'">
+                    </div>
+                    <div class="image-url-text">${image.url}</div>
                 </div>
             `;
         }).join('');
@@ -700,18 +722,12 @@ class EbayOptimizerUI {
     }
 
     displayHtmlCode(htmlTemplate) {
-        // Extract just the body content for eBay description
-        const bodyMatch = htmlTemplate.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
-        let ebayHtml = bodyMatch ? bodyMatch[1] : htmlTemplate;
+        // Use the complete HTML template without cleaning for exact match with download
+        // This ensures the copied code matches the downloaded file exactly
+        this.htmlCodeBlock.innerHTML = this.syntaxHighlight(htmlTemplate);
         
-        // Clean up the HTML for eBay (remove scripts, clean up styles)
-        ebayHtml = this.cleanHtmlForEbay(ebayHtml);
-        
-        // Display in the code block with syntax highlighting
-        this.htmlCodeBlock.innerHTML = this.syntaxHighlight(ebayHtml);
-        
-        // Also store the plain text for copying
-        this.htmlCodeBlock.dataset.plainText = ebayHtml;
+        // Store the complete HTML for copying (same as download)
+        this.htmlCodeBlock.dataset.plainText = htmlTemplate;
     }
 
     syntaxHighlight(html) {

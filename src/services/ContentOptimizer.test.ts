@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { ContentOptimizer } from './ContentOptimizer';
-import { ProductDetails, ResearchData, OptimizedContent } from '../models';
+import { ProductDetails, ResearchData } from '../models';
 
 describe('ContentOptimizer', () => {
   let optimizer: ContentOptimizer;
@@ -184,12 +184,6 @@ describe('ContentOptimizer', () => {
       expect(result.optimizedDescription).toContain('Benefits');
     });
 
-    it('should include condition information', async () => {
-      const result = await optimizer.optimizeContent(mockProductDetails, mockResearchData);
-      
-      expect(result.optimizedDescription.toLowerCase()).toContain('condition');
-      expect(result.optimizedDescription.toLowerCase()).toContain(mockProductDetails.condition.toLowerCase());
-    });
 
     it('should include competitive advantages', async () => {
       const result = await optimizer.optimizeContent(mockProductDetails, mockResearchData);
@@ -324,31 +318,6 @@ describe('ContentOptimizer', () => {
     });
   });
 
-  describe('Condition Notes Generation', () => {
-    it('should generate detailed condition notes', async () => {
-      const result = await optimizer.optimizeContent(mockProductDetails, mockResearchData);
-      
-      expect(result.conditionNotes).toBeDefined();
-      expect(result.conditionNotes.length).toBeGreaterThan(0);
-      expect(result.conditionNotes.toLowerCase()).toContain('condition');
-    });
-
-    it('should reference original condition', async () => {
-      const result = await optimizer.optimizeContent(mockProductDetails, mockResearchData);
-      
-      expect(result.conditionNotes.toLowerCase()).toContain(mockProductDetails.condition.toLowerCase());
-    });
-
-    it('should include standard disclaimers', async () => {
-      const result = await optimizer.optimizeContent(mockProductDetails, mockResearchData);
-      
-      const hasDisclaimer = result.conditionNotes.toLowerCase().includes('photo') ||
-                           result.conditionNotes.toLowerCase().includes('described') ||
-                           result.conditionNotes.toLowerCase().includes('defect');
-      
-      expect(hasDisclaimer).toBe(true);
-    });
-  });
 
   describe('Content Consistency Validation', () => {
     it('should maintain product identity in optimized title', async () => {

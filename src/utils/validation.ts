@@ -305,7 +305,6 @@ export class OptimizedContentValidator {
     if (content.suggestedPrice > 0) score += 20;
     if (content.keywords && content.keywords.length > 0) score += 15;
     if (content.sellingPoints && content.sellingPoints.length > 0) score += 10;
-    if (content.conditionNotes && content.conditionNotes.trim().length > 0) score += 5;
 
     return score;
   }
@@ -652,11 +651,6 @@ export class PipelineConsistencyValidator {
       score -= 15;
     }
 
-    // Check if condition is preserved in optimized content
-    if (originalDetails.condition && !optimizedContent.conditionNotes) {
-      warnings.push('Original condition information not preserved in optimized content');
-      score -= 10;
-    }
 
     return { isValid: true, errors: [], warnings, score: Math.max(0, score) };
   }
@@ -801,7 +795,15 @@ export class DataValidationOrchestrator {
     originalDetails: ProductDetails,
     researchData: ResearchData,
     optimizedContent: OptimizedContent
-  ) {
+  ): {
+    productValidation: ValidationResult;
+    contentValidation: ValidationResult;
+    researchValidation: ValidationResult;
+    consistencyValidation: ValidationResult;
+    qualityMetrics: QualityMetrics & { breakdown: Record<string, number>; recommendations: string[] };
+    overallValid: boolean;
+    overallScore: number;
+  } {
     const productValidation = this.productValidator.validate(originalDetails);
     const contentValidation = this.contentValidator.validate(optimizedContent, originalDetails);
     const researchValidation = this.researchValidator.validate(researchData);

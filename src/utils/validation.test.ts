@@ -119,8 +119,7 @@ describe('OptimizedContentValidator', () => {
     optimizedDescription: 'Experience the ultimate in smartphone technology with the Apple iPhone 14 Pro Max. This premium device features 256GB of storage, stunning Space Black finish, and comes factory unlocked for use with any carrier. Perfect for professionals and tech enthusiasts.',
     suggestedPrice: 949.99,
     keywords: ['iPhone', 'Apple', 'smartphone', 'unlocked', '256GB'],
-    sellingPoints: ['Latest iPhone model', 'Large storage capacity', 'Factory unlocked', 'Premium build quality'],
-    conditionNotes: 'Brand new in original packaging'
+    sellingPoints: ['Latest iPhone model', 'Large storage capacity', 'Factory unlocked', 'Premium build quality']
   };
 
   const originalDetails: ProductDetails = {
@@ -315,8 +314,7 @@ describe('PipelineConsistencyValidator', () => {
     optimizedDescription: 'Premium Apple iPhone with advanced features',
     suggestedPrice: 949,
     keywords: ['iPhone', 'Apple', 'smartphone'],
-    sellingPoints: ['Latest model', 'High quality'],
-    conditionNotes: 'Brand new'
+    sellingPoints: ['Latest model', 'High quality']
   };
 
   it('should validate consistent pipeline data successfully', () => {
@@ -401,8 +399,7 @@ describe('ListingQualityScorer', () => {
     optimizedDescription: 'Experience cutting-edge technology with the Apple iPhone 14 Pro Max. Features 256GB storage, stunning Space Black design, and factory unlocked compatibility. Perfect for professionals and tech enthusiasts who demand the best.',
     suggestedPrice: 949,
     keywords: ['iPhone', 'Apple', 'smartphone', 'unlocked', '256GB'],
-    sellingPoints: ['Latest iPhone model', 'Large storage capacity', 'Factory unlocked', 'Premium build quality'],
-    conditionNotes: 'Brand new in original packaging'
+    sellingPoints: ['Latest iPhone model', 'Large storage capacity', 'Factory unlocked', 'Premium build quality']
   };
 
   it('should calculate comprehensive quality metrics', () => {
@@ -443,8 +440,7 @@ describe('ListingQualityScorer', () => {
       optimizedDescription: 'Phone for sale',
       suggestedPrice: 50,
       keywords: [],
-      sellingPoints: [],
-      conditionNotes: ''
+    sellingPoints: []
     };
 
     const result = scorer.calculateListingQuality(
@@ -496,8 +492,7 @@ describe('DataValidationOrchestrator', () => {
     optimizedDescription: 'Premium Apple iPhone 14 Pro Max with advanced features and 256GB storage',
     suggestedPrice: 949,
     keywords: ['iPhone', 'Apple'],
-    sellingPoints: ['Latest model'],
-    conditionNotes: 'New'
+    sellingPoints: ['Latest model']
   };
 
   it('should validate complete pipeline successfully', () => {

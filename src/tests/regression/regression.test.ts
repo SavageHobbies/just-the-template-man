@@ -296,7 +296,6 @@ describe('Regression Tests', () => {
       expect(optimizedContent).toHaveProperty('suggestedPrice');
       expect(optimizedContent).toHaveProperty('keywords');
       expect(optimizedContent).toHaveProperty('sellingPoints');
-      expect(optimizedContent).toHaveProperty('conditionNotes');
     });
   });
 

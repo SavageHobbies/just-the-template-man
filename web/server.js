@@ -5,7 +5,7 @@ const fs = require('fs');
 const cors = require('cors');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3010;
 
 // Middleware
 app.use(cors());
@@ -55,7 +55,7 @@ app.post('/api/validate', async (req, res) => {
 
 // API endpoint to optimize eBay listing
 app.post('/api/optimize', async (req, res) => {
-    const { url, targetUrl, useTargetImages = false, preset = 'seller', useCase = 'quality-focus', customImages = [] } = req.body;
+    const { url, targetUrl, useTargetImages = false, customImages = [] } = req.body;
     
     if (!url) {
         return res.status(400).json({ error: 'URL is required' });
@@ -308,49 +308,109 @@ function extractImagesFromHtml(htmlContent) {
     const images = [];
     
     try {
-        // Extract main product image
-        const mainImageMatch = htmlContent.match(/<img[^>]+src="([^"]+)"[^>]*alt="[^"]*(?:main|product)[^"]*"/i);
-        if (mainImageMatch) {
-            images.push({
-                url: mainImageMatch[1],
-                type: 'main',
-                altText: 'Main product image'
-            });
+        console.log('🔍 STARTING: Extracting images from HTML template');
+        console.log('   HTML length:', htmlContent.length);
+        
+        // First, let's check if the HTML contains any image placeholders
+        const hasMainImagePlaceholder = htmlContent.includes('{{MAIN_IMAGE}}');
+        const hasImageGalleryPlaceholder = htmlContent.includes('{{IMAGE_GALLERY}}');
+        
+        console.log('   Has {{MAIN_IMAGE}} placeholder:', hasMainImagePlaceholder);
+        console.log('   Has {{IMAGE_GALLERY}} placeholder:', hasImageGalleryPlaceholder);
+        
+        // If we have placeholders, the images are coming from the CLI process, not the HTML
+        if (hasMainImagePlaceholder || hasImageGalleryPlaceholder) {
+            console.log('⚠️ Template contains placeholders - images will be populated by CLI');
+            return [];
         }
         
-        // Extract gallery images
-        const galleryMatches = htmlContent.matchAll(/<div class="gallery-image">\s*<img[^>]+src="([^"]+)"[^>]*alt="([^"]*)"[^>]*>/gi);
-        for (const match of galleryMatches) {
-            images.push({
-                url: match[1],
-                type: 'gallery',
-                altText: match[2] || 'Product image'
-            });
+        // Extract main product image - look for the main image in the template
+        const mainImageSection = htmlContent.match(/<div class="main-image-section">[\s\S]*?<img[^>]+src="([^"]+)"[^>]*>/i);
+        if (mainImageSection) {
+            const mainImageUrl = mainImageSection[1];
+            if (mainImageUrl && mainImageUrl.startsWith('http')) {
+                images.push({
+                    url: mainImageUrl,
+                    type: 'main',
+                    altText: 'Main product image'
+                });
+                console.log('✅ Found main image:', mainImageUrl.substring(0, 80) + '...');
+            }
         }
         
-        // If no specific gallery images found, extract all img tags
-        if (images.length <= 1) {
+        // Extract gallery images - look for gallery-grid structure
+        const galleryGridMatches = htmlContent.matchAll(/<div class="gallery-grid">[\s\S]*?<img[^>]+src="([^"]+)"[^>]*alt="([^"]*)"[^>]*>/gi);
+        for (const match of galleryGridMatches) {
+            const url = match[1];
+            if (url && url.startsWith('http')) {
+                images.push({
+                    url: url,
+                    type: 'gallery',
+                    altText: match[2] || 'Product image'
+                });
+            }
+        }
+        
+        // If no gallery images found, look for any img tags in the template
+        if (images.length === 0) {
+            console.log('🔍 No gallery images found, searching for all img tags...');
             const allImageMatches = htmlContent.matchAll(/<img[^>]+src="([^"]+)"[^>]*(?:alt="([^"]*)")?[^>]*>/gi);
             for (const match of allImageMatches) {
                 const url = match[1];
-                // Skip if already added or if it's a placeholder/icon
-                if (!images.some(img => img.url === url) && 
+                const altText = match[2];
+                
+                // Skip if it's a placeholder or icon
+                if (url && 
+                    url.startsWith('http') && 
                     !url.includes('placeholder') && 
                     !url.includes('icon') &&
-                    url.startsWith('http')) {
+                    !url.includes('via.placeholder.com') &&
+                    !images.some(img => img.url === url)) {
+                    
+                    // Determine image type based on position or class
+                    let type = 'product';
+                    if (altText && (altText.toLowerCase().includes('main') || altText.toLowerCase().includes('primary'))) {
+                        type = 'main';
+                    } else if (altText && (altText.toLowerCase().includes('gallery') || altText.toLowerCase().includes('thumb'))) {
+                        type = 'gallery';
+                    }
+                    
                     images.push({
                         url: url,
-                        type: 'product',
-                        altText: match[2] || 'Product image'
+                        type: type,
+                        altText: altText || 'Product image'
                     });
+                    
+                    console.log('📷 Found image:', url.substring(0, 80) + '...', type);
                 }
             }
         }
         
-        console.log(`Extracted ${images.length} real images from HTML template`);
+        // If we still have no images, check for any image URLs in the HTML
+        if (images.length === 0) {
+            console.log('🔍 Still no images found, searching for any image URLs...');
+            const imageUrls = htmlContent.match(/https:\/\/[^"\s]+\.(jpg|jpeg|png|gif|webp)/gi);
+            if (imageUrls && imageUrls.length > 0) {
+                for (const url of imageUrls) {
+                    if (!images.some(img => img.url === url)) {
+                        images.push({
+                            url: url,
+                            type: 'product',
+                            altText: 'Product image'
+                        });
+                        console.log('📷 Found image URL:', url.substring(0, 80) + '...');
+                    }
+                }
+            }
+        }
+        
+        console.log(`✅ FINAL RESULT: Extracted ${images.length} real images from HTML template`);
+        images.forEach((img, index) => {
+            console.log(`   ${index + 1}. [${img.type}] ${img.url.substring(0, 60)}...`);
+        });
         
     } catch (error) {
-        console.warn('Could not extract images from HTML:', error);
+        console.error('❌ Could not extract images from HTML:', error);
     }
     
     return images;
@@ -575,7 +635,7 @@ async function extractImagesFromTargetUrl(targetUrl) {
 }
 
 // Error handling middleware
-app.use((error, req, res, next) => {
+app.use((error, req, res) => {
     console.error('Server error:', error);
     res.status(500).json({ 
         error: 'Internal server error', 

@@ -15,8 +15,7 @@ describe('Template Quality Tests', () => {
       optimizedDescription: 'Experience premium performance with this iPhone 12 Pro featuring 128GB storage, unlocked for all carriers, and stunning Pacific Blue finish. Includes original accessories.',
       suggestedPrice: 589.99,
       keywords: ['iPhone', '12 Pro', 'Unlocked', '128GB', 'Pacific Blue', 'Apple'],
-      sellingPoints: ['Unlocked for all carriers', 'Excellent condition', 'Original accessories included', 'Fast shipping'],
-      conditionNotes: 'Minor scratches on back, screen in perfect condition'
+      sellingPoints: ['Unlocked for all carriers', 'Excellent condition', 'Original accessories included', 'Fast shipping']
     };
 
     mockProductDetails = {
@@ -61,7 +60,6 @@ describe('Template Quality Tests', () => {
       expect(htmlTemplate).toContain(mockOptimizedContent.optimizedDescription);
       // Note: Suggested price is used for eBay listing setup, not displayed in template
       expect(mockOptimizedContent.suggestedPrice).toBeGreaterThan(0);
-      expect(htmlTemplate).toContain(mockOptimizedContent.conditionNotes);
     });
 
     it('should include image gallery with proper structure', async () => {

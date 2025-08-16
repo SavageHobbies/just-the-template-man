@@ -19,13 +19,12 @@ describe('TemplateRenderer', () => {
   beforeEach(() => {
     templateRenderer = new TemplateRenderer();
     
-    mockOptimizedContent = {
+  mockOptimizedContent = {
       optimizedTitle: 'Amazing Product - Limited Edition',
       optimizedDescription: 'This is an amazing product with great features.',
       suggestedPrice: 99.99,
       keywords: ['collectible', 'limited', 'rare'],
-      sellingPoints: ['Mint condition', 'Original packaging', 'Fast shipping'],
-      conditionNotes: 'Item is in excellent condition with minor shelf wear.'
+      sellingPoints: ['Mint condition', 'Original packaging', 'Fast shipping']
     };
 
     mockProductDetails = {
@@ -55,7 +54,6 @@ describe('TemplateRenderer', () => {
           <h1>{{TITLE}}</h1>
           <img src="{{MAIN_IMAGE}}" alt="{{TITLE}}">
           <p>{{DESCRIPTION}}</p>
-          <p>{{CONDITION_NOTES}}</p>
           <p>{{KEYWORDS_DESCRIPTION}}</p>
           <ul>{{PRODUCT_DETAILS_LIST}}</ul>
           <ul>{{WHATS_INCLUDED_LIST}}</ul>
@@ -81,7 +79,6 @@ describe('TemplateRenderer', () => {
       expect(result).toContain('Amazing Product - Limited Edition');
       expect(result).toContain('https://example.com/image1.jpg');
       expect(result).toContain('This is an amazing product with great features.');
-      expect(result).toContain('Item is in excellent condition with minor shelf wear.');
       expect(result).toContain('collectible, limited, rare');
       expect(result).not.toContain('{{TITLE}}');
       expect(result).not.toContain('{{MAIN_IMAGE}}');
@@ -103,8 +100,7 @@ describe('TemplateRenderer', () => {
         optimizedDescription: '',
         suggestedPrice: 0,
         keywords: [],
-        sellingPoints: [],
-        conditionNotes: ''
+        sellingPoints: []
       };
 
       const result = await templateRenderer.renderTemplate(
@@ -115,7 +111,6 @@ describe('TemplateRenderer', () => {
 
       expect(result).toContain('Original Product Title');
       expect(result).toContain('Original description');
-      expect(result).toContain('Item condition: Used');
     });
 
     it('should validate HTML and throw error for unprocessed placeholders', async () => {
@@ -226,8 +221,7 @@ describe('TemplateRenderer', () => {
         optimizedDescription: 'Description with <img src="x" onerror="alert(1)">',
         suggestedPrice: 99.99,
         keywords: ['<script>alert("xss")</script>'],
-        sellingPoints: ['<iframe src="javascript:alert(1)"></iframe>'],
-        conditionNotes: 'Notes with "quotes" and \'apostrophes\''
+        sellingPoints: ['<iframe src="javascript:alert(1)"></iframe>']
       };
 
       const result = await templateRenderer.renderTemplate(

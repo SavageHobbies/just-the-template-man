@@ -133,7 +133,6 @@ describe('Real eBay URLs Integration Tests', () => {
         const result = await pipeline.processListing(testUrl);
         
         expect(result).toBeDefined();
-        expect(result.optimizedContent.conditionNotes).toBeTruthy();
       } catch (error) {
         console.warn('Car parts listing test failed (expected for demo URLs):', error);
         expect(error).toBeDefined();
@@ -246,7 +245,6 @@ describe('Cross-Category Validation', () => {
             sellingPointsCount: optimizedContent.sellingPoints.length,
             templateSize: htmlTemplate.length,
             hasValidPrice: optimizedContent.suggestedPrice > 0,
-            hasConditionNotes: optimizedContent.conditionNotes.length > 0
           };
           
           testResults.push(qualityScore);

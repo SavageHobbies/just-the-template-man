@@ -72,10 +72,20 @@ export class MemoryCache<T> {
   }
 
   /**
-   * Get cache file path for a key
+   * Sanitize a string for safe use as a filename
+   */
+  private sanitizeFilename(name: string): string {
+    // Replace all illegal filename characters with underscores
+    // Illegal on Windows: \ / : * ? " < > | and also avoid spaces
+    return name.replace(/[\\\/:\*\?"<>\|\s]/g, '_');
+  }
+
+  /**
+   * Get cache file path for a key (always use hash for filename)
    */
   private getCacheFilePath(key: string): string {
-    return join(this.cacheDir, `${key}.json`);
+    const hashKey = this.generateKey(key);
+    return join(this.cacheDir, `${hashKey}.json`);
   }
 
   /**

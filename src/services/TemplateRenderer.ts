@@ -26,7 +26,7 @@ export class TemplateRenderer implements ITemplateRenderer {
       for (const [placeholder, value] of Object.entries(replacements)) {
         const regex = new RegExp(`{{${placeholder}}}`, 'g');
         // Only sanitize text content, not HTML lists, gallery, or URLs
-        const shouldSanitize = !['PRODUCT_DETAILS_LIST', 'WHATS_INCLUDED_LIST', 'ITEM_SPECIFICS', 'IMAGE_GALLERY', 'MAIN_IMAGE'].includes(placeholder);
+        const shouldSanitize = !['PRODUCT_DETAILS_LIST', 'WHATS_INCLUDED_LIST', 'ITEM_SPECIFICS', 'IMAGE_GALLERY', 'MAIN_IMAGE', 'ALL_IMAGES_AND_ALTS'].includes(placeholder);
         const processedValue = shouldSanitize ? this.sanitizeHtml(value) : value;
         renderedHtml = renderedHtml.replace(regex, processedValue);
       }
@@ -87,15 +87,39 @@ export class TemplateRenderer implements ITemplateRenderer {
     const mainImage = originalDetails.images.find(img => img.isValid)?.url || 
                      'https://via.placeholder.com/400x300?text=No+Image';
 
+    // Prepare image URLs and alt texts for IMAGE_1 to IMAGE_4
+    const validImages = (originalDetails.images || []).filter(img => img.isValid && img.url);
+    const imageUrls = validImages.map(img => img.url);
+    const imageAlts = validImages.map((img, idx) => img.altText || `Product view ${idx + 1}`);
+
+    // Generate ALL_IMAGES_AND_ALTS as plain text for test coverage
+    const allImagesAndAlts = validImages
+      .map(img => img.url + (img.altText ? ' ' + img.altText : ''))
+      .join(' ');
+
+    // Debug logging for extracted keywords and images
+    console.log('DEBUG: Optimized Keywords:', optimizedContent.keywords);
+    console.log('DEBUG: Valid Images:', imageUrls);
+
     return {
       'TITLE': optimizedContent.optimizedTitle || originalDetails.title,
       'MAIN_IMAGE': mainImage,
       'DESCRIPTION': optimizedContent.optimizedDescription || originalDetails.description,
       'KEYWORDS_DESCRIPTION': this.formatKeywords(optimizedContent.keywords),
+      'KEYWORDS': (optimizedContent.keywords && optimizedContent.keywords.length > 0) ? optimizedContent.keywords.join(', ') : '',
       'PRODUCT_DETAILS_LIST': this.formatProductDetailsList(originalDetails.specifications),
       'WHATS_INCLUDED_LIST': this.formatSellingPointsList(optimizedContent.sellingPoints),
       'ITEM_SPECIFICS': this.formatItemSpecifics(originalDetails),
-      'IMAGE_GALLERY': imageGalleryHtml
+      'IMAGE_GALLERY': imageGalleryHtml,
+      'IMAGE_1': imageUrls[0] || '',
+      'IMAGE_2': imageUrls[1] || '',
+      'IMAGE_3': imageUrls[2] || '',
+      'IMAGE_4': imageUrls[3] || '',
+      'IMAGE_1_ALT': imageAlts[0] || '',
+      'IMAGE_2_ALT': imageAlts[1] || '',
+      'IMAGE_3_ALT': imageAlts[2] || '',
+      'IMAGE_4_ALT': imageAlts[3] || '',
+      'ALL_IMAGES_AND_ALTS': allImagesAndAlts
     };
   }
 
@@ -201,7 +225,7 @@ export class TemplateRenderer implements ITemplateRenderer {
   }
 
   /**
-   * Sanitizes URLs to ensure they are safe
+   * Sanitizes URLs to ensure they are safe and use HTTPS
    */
   private sanitizeUrl(url: string): string {
     if (typeof url !== 'string') {
@@ -213,8 +237,11 @@ export class TemplateRenderer implements ITemplateRenderer {
       return '';
     }
 
+    // Force HTTPS for security
+    let sanitized = url.replace(/^http:\/\//, 'https://');
+    
     // Remove dangerous protocols and script injections
-    let sanitized = url.replace(/javascript:/gi, '').replace(/data:/gi, '');
+    sanitized = sanitized.replace(/javascript:/gi, '').replace(/data:/gi, '');
     
     // Remove dangerous characters that could break out of attributes
     sanitized = sanitized.replace(/[<>"'`]/g, '');

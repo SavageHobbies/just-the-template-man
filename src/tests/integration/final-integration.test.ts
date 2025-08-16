@@ -264,7 +264,6 @@ describe('Final Integration Tests', () => {
 
       const requiredSections = [
         'Product Description',
-        'Condition Notes',
         'Item Specifics',
         'Image Gallery',
         'Top Rated eBay Seller'

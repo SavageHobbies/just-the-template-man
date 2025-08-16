@@ -2,7 +2,6 @@
 
 import { describe, it, expect, beforeEach } from 'vitest';
 import { DataValidationOrchestrator } from './validation';
-import { Pipeline } from '../pipeline';
 import { ProductDetails, ResearchData, OptimizedContent } from '../models';
 
 describe('Validation Integration Tests', () => {
@@ -85,8 +84,7 @@ describe('Validation Integration Tests', () => {
           'Stunning 16-inch Liquid Retina XDR display',
           'Perfect for professionals and creators',
           'Includes original packaging and warranty'
-        ],
-        conditionNotes: 'Brand new in sealed original packaging with full manufacturer warranty'
+        ]
       };
 
       const result = orchestrator.validatePipeline(
@@ -140,8 +138,7 @@ describe('Validation Integration Tests', () => {
         optimizedDescription: 'short', // Very short description
         suggestedPrice: 0, // Zero price should cause error
         keywords: [],
-        sellingPoints: [],
-        conditionNotes: ''
+        sellingPoints: []
       };
 
       const result = orchestrator.validatePipeline(
@@ -197,8 +194,7 @@ describe('Validation Integration Tests', () => {
         optimizedDescription: 'Experience gaming like never before with the Nintendo Switch OLED',
         suggestedPrice: 500, // Way too high compared to research
         keywords: ['Nintendo', 'Switch', 'OLED', 'gaming'],
-        sellingPoints: ['OLED display', 'Portable gaming'],
-        conditionNotes: 'Brand new'
+        sellingPoints: ['OLED display', 'Portable gaming']
       };
 
       const result = orchestrator.validatePipeline(
@@ -258,8 +254,7 @@ describe('Validation Integration Tests', () => {
         optimizedDescription: 'Experience premium audio with Sony WH-1000XM4 wireless noise canceling headphones featuring advanced bluetooth technology',
         suggestedPrice: 289,
         keywords: ['Sony', 'WH-1000XM4', 'wireless', 'noise canceling', 'bluetooth', 'premium'],
-        sellingPoints: ['Industry-leading noise cancellation', 'Premium wireless audio', 'Long battery life'],
-        conditionNotes: 'Brand new with warranty'
+        sellingPoints: ['Industry-leading noise cancellation', 'Premium wireless audio', 'Long battery life']
       };
 
       const goodResult = orchestrator.validatePipeline(
@@ -276,8 +271,7 @@ describe('Validation Integration Tests', () => {
         optimizedDescription: 'For sale', // Very short description
         suggestedPrice: 289,
         keywords: [], // No keywords at all
-        sellingPoints: [], // No selling points
-        conditionNotes: ''
+        sellingPoints: [] // No selling points
       };
 
       const poorResult = orchestrator.validatePipeline(
@@ -331,8 +325,7 @@ describe('Validation Integration Tests', () => {
         optimizedDescription: 'Powerful Apple iPad Pro featuring M2 chip, stunning 12.9-inch Liquid Retina XDR display, and 256GB storage. Perfect for creative professionals and productivity.',
         suggestedPrice: 1079,
         keywords: ['iPad', 'Apple', 'Pro', 'tablet', '12.9-inch', '256GB', 'M2'],
-        sellingPoints: ['M2 chip performance', 'Large display', 'Professional features'],
-        conditionNotes: 'Brand new with warranty'
+        sellingPoints: ['M2 chip performance', 'Large display', 'Professional features']
       };
 
       // Test multiple variations
