@@ -27,7 +27,7 @@ export class ContentOptimizer implements IContentOptimizer {
     const optimizedTitle = this.generateOptimizedTitle(originalDetails, research.keywordAnalysis);
 
     // Create compelling description highlighting key features
-    const optimizedDescription = this.generateOptimizedDescription(originalDetails, research);
+    const optimizedDescription = this.generateOptimizedDescription(originalDetails);
 
     // Calculate suggested price based on market data
     const suggestedPrice = this.calculateSuggestedPrice(originalDetails, research.priceAnalysis);
@@ -84,33 +84,63 @@ export class ContentOptimizer implements IContentOptimizer {
 
   private generateOptimizedTitle(originalDetails: ProductDetails, keywordAnalysis: KeywordAnalysis): string {
     const { title } = originalDetails;
-    const { popularKeywords, keywordFrequency } = keywordAnalysis;
+    const { popularKeywords, keywordFrequency, searchVolume } = keywordAnalysis;
 
-    // Extract key product information from original title
-    const originalWords = this.extractWordsFromTitle(title);
+    // Extract core product words from title
+    const coreWords = this.extractCoreProductWords(title);
     
     // Get high-value keywords not already in title
     const missingKeywords = popularKeywords.filter(keyword => 
       !title.toLowerCase().includes(keyword.toLowerCase())
     );
 
-    // Sort keywords by frequency and search volume
-    const prioritizedKeywords = missingKeywords
-      .sort((a, b) => (keywordFrequency[b] || 0) - (keywordFrequency[a] || 0))
-      .slice(0, 3); // Limit to top 3 missing keywords
+    // Score keywords based on frequency, search volume, and strategic importance
+    const keywordScores: Record<string, number> = {};
+    missingKeywords.forEach(keyword => {
+      const frequencyScore = keywordFrequency[keyword] || 0;
+      const searchVolumeScore = searchVolume[keyword] || 0;
+      // Normalize search volume (0-10 scale)
+      const normalizedSearchVolume = Math.min(10, Math.log10(searchVolumeScore + 1) * 2);
+      
+      // Strategic scoring: prioritize keywords that appear early in popular titles
+      const strategicBonus = this.getStrategicKeywordBonus(keyword, popularKeywords);
+      
+      keywordScores[keyword] = frequencyScore * 0.5 + normalizedSearchVolume * 0.3 + strategicBonus * 0.2;
+    });
 
-    // Build optimized title
+    // Sort keywords by score and get top candidates
+    const prioritizedKeywords = Object.entries(keywordScores)
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 5) // Get top 5 candidates
+      .map(([keyword]) => keyword);
+
+    // Build optimized title with strategic keyword placement
     let optimizedTitle = title.trim();
 
-    // Add high-value keywords if space allows
+    // Strategy 1: Add high-value keywords at the beginning if space allows (better SEO)
     for (const keyword of prioritizedKeywords) {
-      const testTitle = `${optimizedTitle} ${keyword}`;
+      const testTitle = `${keyword} ${optimizedTitle}`;
       if (testTitle.length <= this.MAX_TITLE_LENGTH) {
         optimizedTitle = testTitle;
       } else {
         break;
       }
     }
+
+    // Strategy 2: If we still have space, add more strategic keywords at the end
+    if (optimizedTitle.length < this.MAX_TITLE_LENGTH * 0.8) {
+      for (const keyword of prioritizedKeywords.reverse()) {
+        const testTitle = `${optimizedTitle} ${keyword}`;
+        if (testTitle.length <= this.MAX_TITLE_LENGTH) {
+          optimizedTitle = testTitle;
+        } else {
+          break;
+        }
+      }
+    }
+
+    // Strategy 3: Ensure core product identity is maintained
+    optimizedTitle = this.ensureCoreProductIdentity(optimizedTitle, coreWords);
 
     // Ensure title is within character limit
     if (optimizedTitle.length > this.MAX_TITLE_LENGTH) {
@@ -121,6 +151,66 @@ export class ContentOptimizer implements IContentOptimizer {
     optimizedTitle = this.capitalizeTitle(optimizedTitle);
 
     return optimizedTitle;
+  }
+
+  /**
+   * Extract core product words from title (brand, model, key features)
+   */
+  private extractCoreProductWords(title: string): string[] {
+    // Common words to exclude from core product identification
+    const stopWords = new Set([
+      'the', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by',
+      'a', 'an', 'new', 'used', 'like', 'good', 'excellent', 'mint', 'perfect',
+      'condition', 'price', 'sale', 'buy', 'purchase', 'item', 'product'
+    ]);
+
+    return title
+      .toLowerCase()
+      .replace(/[^\w\s]/g, ' ')
+      .split(/\s+/)
+      .filter(word => word.length > 2 && !stopWords.has(word));
+  }
+
+  /**
+   * Get strategic bonus for keywords based on position in popular titles
+   */
+  private getStrategicKeywordBonus(keyword: string, popularKeywords: string[]): number {
+    // Keywords that appear early in popular titles get bonus
+    const earlyPositionBonus = popularKeywords.indexOf(keyword) < 3 ? 2 : 0;
+    
+    // High-volume keywords get bonus
+    const volumeBonus = keyword.length > 4 ? 1 : 0;
+    
+    return earlyPositionBonus + volumeBonus;
+  }
+
+  /**
+   * Ensure core product identity is maintained in optimized title
+   */
+  private ensureCoreProductIdentity(title: string, coreWords: string[]): string {
+    const titleWords = title.toLowerCase().split(/\s+/);
+    
+    // Check if core words are present in the title
+    const missingCoreWords = coreWords.filter(word => 
+      !titleWords.some(titleWord => titleWord.includes(word) || word.includes(titleWord))
+    );
+
+    // If core words are missing, try to add them back
+    if (missingCoreWords.length > 0) {
+      let testTitle = title;
+      
+      // Try to add missing core words at the end
+      for (const word of missingCoreWords) {
+        const testWithWord = `${testTitle} ${word}`;
+        if (testWithWord.length <= this.MAX_TITLE_LENGTH) {
+          testTitle = testWithWord;
+        }
+      }
+      
+      return testTitle;
+    }
+
+    return title;
   }
 
   private extractWordsFromTitle(title: string): string[] {
@@ -165,12 +255,11 @@ export class ContentOptimizer implements IContentOptimizer {
       .join(' ');
   }
 
-  private generateOptimizedDescription(originalDetails: ProductDetails, research: ResearchData): string {
-    const { title, description, specifications } = originalDetails;
+  private generateOptimizedDescription(originalDetails: ProductDetails): string {
+    const { title, specifications } = originalDetails;
     
-    // Clean the original title and description
+    // Clean the original title
     const cleanTitle = this.cleanText(title);
-    const cleanDescription = this.cleanText(description);
     
     // Extract product features from specifications
     const productFeatures = this.extractProductFeatures(specifications);
@@ -273,7 +362,7 @@ export class ContentOptimizer implements IContentOptimizer {
     return features.slice(0, 5); // Limit to top 5 features
   }
 
-  private generateBenefitsSection(keyFeatures: string[], keywordAnalysis: KeywordAnalysis): string {
+  private generateBenefitsSection(keyFeatures: string[]): string {
     if (keyFeatures.length === 0) {
       return '';
     }

@@ -101,6 +101,9 @@ export class TemplateRenderer implements ITemplateRenderer {
     console.log('DEBUG: Optimized Keywords:', optimizedContent.keywords);
     console.log('DEBUG: Valid Images:', imageUrls);
 
+    // Create enhanced copy-paste friendly sections
+    const copyPasteFriendlySections = this.createCopyPasteFriendlySections(optimizedContent, originalDetails);
+
     return {
       'TITLE': optimizedContent.optimizedTitle || originalDetails.title,
       'MAIN_IMAGE': mainImage,
@@ -119,8 +122,134 @@ export class TemplateRenderer implements ITemplateRenderer {
       'IMAGE_2_ALT': imageAlts[1] || '',
       'IMAGE_3_ALT': imageAlts[2] || '',
       'IMAGE_4_ALT': imageAlts[3] || '',
-      'ALL_IMAGES_AND_ALTS': allImagesAndAlts
+      'ALL_IMAGES_AND_ALTS': allImagesAndAlts,
+      // Enhanced copy-paste friendly sections
+      'COPY_FRIENDLY_TITLE': copyPasteFriendlySections.title,
+      'COPY_FRIENDLY_DESCRIPTION': copyPasteFriendlySections.description,
+      'COPY_FRIENDLY_KEYWORDS': copyPasteFriendlySections.keywords,
+      'COPY_FRIENDLY_SELLING_POINTS': copyPasteFriendlySections.sellingPoints,
+      'COPY_FRIENDLY_SPECIFICATIONS': copyPasteFriendlySections.specifications,
+      'COPY_FRIENDLY_SUMMARY': copyPasteFriendlySections.summary
     };
+  }
+
+  /**
+   * Creates copy-paste friendly sections for easy transfer to other platforms
+   */
+  private createCopyPasteFriendlySections(
+    optimizedContent: OptimizedContent,
+    originalDetails: ProductDetails
+  ): {
+    title: string;
+    description: string;
+    keywords: string;
+    sellingPoints: string;
+    specifications: string;
+    summary: string;
+  } {
+    // Clean title for copy-paste
+    const cleanTitle = this.sanitizeHtml(optimizedContent.optimizedTitle || originalDetails.title)
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    // Clean description for copy-paste (remove HTML, keep structure)
+    const cleanDescription = this.cleanTextForCopyPaste(optimizedContent.optimizedDescription || originalDetails.description);
+
+    // Format keywords as comma-separated list
+    const keywords = optimizedContent.keywords && optimizedContent.keywords.length > 0
+      ? optimizedContent.keywords.join(', ')
+      : 'No keywords specified';
+
+    // Format selling points as bullet points
+    const sellingPoints = optimizedContent.sellingPoints && optimizedContent.sellingPoints.length > 0
+      ? optimizedContent.sellingPoints.map(point => `• ${this.sanitizeHtml(point)}`).join('\n')
+      : '• Item as shown in photos';
+
+    // Format specifications as clean list
+    const specifications = Object.entries(originalDetails.specifications)
+      .filter(([key]) => !key.toLowerCase().includes('condition'))
+      .map(([key, value]) => `${key}: ${this.sanitizeHtml(value)}`)
+      .join('\n');
+
+    // Create summary section
+    const summary = this.createSummarySection(optimizedContent, originalDetails);
+
+    return {
+      title: cleanTitle,
+      description: cleanDescription,
+      keywords,
+      sellingPoints,
+      specifications,
+      summary
+    };
+  }
+
+  /**
+   * Cleans text for copy-paste operations
+   */
+  private cleanTextForCopyPaste(text: string): string {
+    if (!text) return '';
+
+    return text
+      // Remove HTML tags but preserve line breaks
+      .replace(/<[^>]*>/g, '')
+      // Fix missing spaces between words
+      .replace(/([a-z])([A-Z])/g, '$1 $2')
+      // Fix missing spaces after punctuation
+      .replace(/([.,:;])([A-Za-z])/g, '$1 $2')
+      // Replace multiple newlines with single newline
+      .replace(/\n{3,}/g, '\n\n')
+      // Remove excessive whitespace
+      .replace(/\s+/g, ' ')
+      // Clean up
+      .trim();
+  }
+
+  /**
+   * Creates a summary section with all key information
+   */
+  private createSummarySection(
+    optimizedContent: OptimizedContent,
+    originalDetails: ProductDetails
+  ): string {
+    const sections: string[] = [];
+
+    // Title section
+    sections.push(`TITLE: ${optimizedContent.optimizedTitle || originalDetails.title}`);
+
+    // Price section
+    sections.push(`PRICE: $${originalDetails.price.toFixed(2)}`);
+
+    // Condition section
+    sections.push(`CONDITION: ${originalDetails.condition}`);
+
+    // Location section
+    sections.push(`LOCATION: ${originalDetails.location}`);
+
+    // Keywords section
+    if (optimizedContent.keywords && optimizedContent.keywords.length > 0) {
+      sections.push(`KEYWORDS: ${optimizedContent.keywords.join(', ')}`);
+    }
+
+    // Selling points section
+    if (optimizedContent.sellingPoints && optimizedContent.sellingPoints.length > 0) {
+      sections.push('SELLING POINTS:');
+      optimizedContent.sellingPoints.forEach(point => {
+        sections.push(`• ${this.sanitizeHtml(point)}`);
+      });
+    }
+
+    // Specifications section
+    if (Object.keys(originalDetails.specifications).length > 0) {
+      sections.push('SPECIFICATIONS:');
+      Object.entries(originalDetails.specifications)
+        .filter(([key]) => !key.toLowerCase().includes('condition'))
+        .forEach(([key, value]) => {
+          sections.push(`${key}: ${this.sanitizeHtml(value)}`);
+        });
+    }
+
+    return sections.join('\n');
   }
 
   /**
@@ -131,7 +260,46 @@ export class TemplateRenderer implements ITemplateRenderer {
       return 'No specific keywords available.';
     }
     
-    return `This item is perfect for collectors interested in: ${keywords.join(', ')}.`;
+    // Group keywords by category for better display
+    const categorizedKeywords = this.categorizeKeywords(keywords);
+    
+    let formattedText = 'This item is perfect for buyers searching for: ';
+    
+    // Add primary keywords first
+    if (categorizedKeywords.primary.length > 0) {
+      formattedText += categorizedKeywords.primary.join(', ');
+    }
+    
+    // Add secondary keywords if available
+    if (categorizedKeywords.secondary.length > 0) {
+      formattedText += categorizedKeywords.secondary.length > 0 ? ' and ' + categorizedKeywords.secondary.join(', ') : '';
+    }
+    
+    formattedText += '.';
+    
+    return formattedText;
+  }
+
+  /**
+   * Categorizes keywords for better display
+   */
+  private categorizeKeywords(keywords: string[]): { primary: string[], secondary: string[] } {
+    const primary: string[] = [];
+    const secondary: string[] = [];
+    
+    // Primary keywords: brand, model, core product terms
+    const primaryPatterns = ['apple', 'iphone', 'samsung', 'galaxy', 'sony', 'playstation', 'nintendo', 'microsoft', 'xbox'];
+    
+    keywords.forEach(keyword => {
+      const lowerKeyword = keyword.toLowerCase();
+      if (primaryPatterns.some(pattern => lowerKeyword.includes(pattern))) {
+        primary.push(keyword);
+      } else {
+        secondary.push(keyword);
+      }
+    });
+    
+    return { primary, secondary };
   }
 
   /**

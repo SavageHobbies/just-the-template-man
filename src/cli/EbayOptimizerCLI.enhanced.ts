@@ -38,7 +38,6 @@ export class EbayOptimizerCLI {
     const webScraper = new AxiosWebScrapingService();
     const productExtractor = new EbayProductExtractor();
     const marketResearcher = new MarketResearchEngine();
-    // researchAnalyzer is available for future enhancements
     const contentOptimizer = new ContentOptimizer();
     const templateRenderer = new TemplateRenderer();
 
@@ -241,22 +240,47 @@ export class EbayOptimizerCLI {
     console.log(chalk.cyan(`"${content.optimizedTitle}"`));
     console.log(chalk.gray(`(${content.optimizedTitle.length}/80 characters)\n`));
 
-    // Display keywords
+    // Display keywords with enhanced formatting
     console.log(chalk.yellow.bold('🏷️  SEO KEYWORDS:'));
-    const keywordsString = content.keywords.join(', ');
-    console.log(chalk.cyan(keywordsString));
-    console.log(chalk.gray(`(${content.keywords.length} keywords)\n`));
+    console.log(chalk.cyan('Keywords ready to copy:'));
+    console.log(chalk.white(content.keywords.join(', ')));
+    
+    // Display keyword copy blocks
+    console.log(chalk.gray('\n--- COPY BLOCKS ---'));
+    console.log(chalk.cyan('For eBay Title:'));
+    console.log(chalk.white(content.keywords.slice(0, 3).join(' ')));
+    
+    console.log(chalk.cyan('\nFor eBay Description:'));
+    console.log(chalk.white(content.keywords.join(', ')));
+    console.log(chalk.gray(`(${content.keywords.length} keywords total)\n`));
 
-    // Display selling points
+    // Display selling points with enhanced formatting
     console.log(chalk.yellow.bold('💡 SELLING POINTS:'));
+    console.log(chalk.cyan('Selling points ready to copy:'));
     content.sellingPoints.forEach((point, index) => {
-      console.log(chalk.cyan(`${index + 1}. ${point}`));
+      console.log(chalk.white(`${index + 1}. ${point}`));
     });
+    
+    // Display selling points copy block
+    console.log(chalk.gray('\n--- COPY BLOCK ---'));
+    console.log(chalk.cyan('Copy these points directly into your description:'));
+    const sellingPointsBlock = content.sellingPoints.map((point, index) => 
+      chalk.white(`${index + 1}. ${point}`)
+    ).join('\n');
+    console.log(sellingPointsBlock);
     console.log();
 
-    // Display optimized description
+    // Display optimized description with enhanced formatting
     console.log(chalk.yellow.bold('📄 OPTIMIZED DESCRIPTION:'));
+    console.log(chalk.cyan('Description ready to copy:'));
     console.log(chalk.white(content.optimizedDescription));
+    
+    // Display description copy block
+    console.log(chalk.gray('\n--- COPY BLOCK ---'));
+    console.log(chalk.cyan('Copy this entire description:'));
+    console.log(chalk.white('='.repeat(60)));
+    console.log(chalk.white(content.optimizedDescription));
+    console.log(chalk.white('='.repeat(60)));
     console.log();
   }
 
@@ -419,41 +443,101 @@ export class EbayOptimizerCLI {
   }
 
   /**
-   * Download images to local directory
+   * Download images to local directory with enhanced JPG support
    */
   private async downloadImages(images: any[], outputDir: string): Promise<void> {
-    console.log(chalk.blue.bold('\n📸 Downloading images...\n'));
+    console.log(chalk.blue.bold('\n📸 DOWNLOADING IMAGES - Enhanced JPG Support\n'));
     
     try {
       // Create images directory
       const imagesDir = join(outputDir, 'images');
       if (!existsSync(imagesDir)) {
         mkdirSync(imagesDir, { recursive: true });
+        console.log(chalk.green(`✅ Created directory: ${imagesDir}`));
       }
 
+      let successCount = 0;
+      let failedCount = 0;
+      
       for (let i = 0; i < images.length; i++) {
         const image = images[i];
         const filename = `product-image-${i + 1}.jpg`;
-        const filepath = join(imagesDir, filename);
         
-        console.log(chalk.cyan(`Downloading ${image.url}...`));
+        console.log(chalk.cyan(`\n📥 Downloading Image ${i + 1}/${images.length}:`));
+        console.log(chalk.white(`   URL: ${image.url}`));
+        console.log(chalk.white(`   Filename: ${filename}`));
         
-        const response = await axios({
-          method: 'GET',
-          url: image.url,
-          responseType: 'stream'
-        });
+        try {
+          // Check if URL contains image extension
+          const urlLower = image.url.toLowerCase();
+          const isJpg = urlLower.includes('.jpg') || urlLower.includes('.jpeg');
+          const isPng = urlLower.includes('.png');
+          const isWebp = urlLower.includes('.webp');
+          
+          // Use appropriate extension based on URL or default to .jpg
+          let finalFilename = filename;
+          if (isJpg) {
+            finalFilename = filename.replace('.jpg', '.jpg');
+          } else if (isPng) {
+            finalFilename = filename.replace('.jpg', '.png');
+          } else if (isWebp) {
+            finalFilename = filename.replace('.jpg', '.webp');
+          }
+          
+          const finalFilepath = join(imagesDir, finalFilename);
+          
+          console.log(chalk.white(`   Saving as: ${finalFilepath}`));
+          
+          const response = await axios({
+            method: 'GET',
+            url: image.url,
+            responseType: 'stream',
+            timeout: 30000, // 30 second timeout
+            headers: {
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+            }
+          });
 
-        const writer = createWriteStream(filepath);
-        await pipeline(response.data, writer);
-        
-        console.log(chalk.green(`✅ Saved to: ${filepath}\n`));
+          const writer = createWriteStream(finalFilepath);
+          await pipeline(response.data, writer);
+          
+          // Verify file was created and has content
+          const stats = require('fs').statSync(finalFilepath);
+          if (stats.size > 0) {
+            successCount++;
+            console.log(chalk.green(`   ✅ Successfully downloaded (${(stats.size / 1024).toFixed(2)} KB)`));
+          } else {
+            failedCount++;
+            console.log(chalk.red(`   ❌ Downloaded file is empty`));
+            require('fs').unlinkSync(finalFilepath); // Remove empty file
+          }
+          
+        } catch (downloadError) {
+          failedCount++;
+          console.error(chalk.red(`   ❌ Failed to download: ${downloadError instanceof Error ? downloadError.message : 'Unknown error'}`));
+        }
       }
       
-      console.log(chalk.green(`📁 All images downloaded to: ${imagesDir}`));
+      // Summary report
+      console.log(chalk.blue.bold('\n📊 DOWNLOAD SUMMARY:'));
+      console.log(chalk.green(`✅ Successfully downloaded: ${successCount} image(s)`));
+      if (failedCount > 0) {
+        console.log(chalk.yellow(`⚠️  Failed to download: ${failedCount} image(s)`));
+      }
+      console.log(chalk.white(`📁 All images saved to: ${imagesDir}`));
+      
+      // Provide next steps
+      console.log(chalk.cyan('\n📋 NEXT STEPS:'));
+      console.log(chalk.white('1. Check the images folder for your downloaded files'));
+      console.log(chalk.white('2. Review image quality before uploading to eBay'));
+      console.log(chalk.white('3. Rename files if needed for better organization'));
       
     } catch (error) {
-      console.error(chalk.red(`❌ Failed to download images: ${error instanceof Error ? error.message : 'Unknown error'}`));
+      console.error(chalk.red(`\n❌ CRITICAL ERROR: Failed to download images: ${error instanceof Error ? error.message : 'Unknown error'}`));
+      console.error(chalk.yellow('💡 TROUBLESHOOTING:'));
+      console.error(chalk.white('• Check your internet connection'));
+      console.error(chalk.white('• Verify image URLs are accessible'));
+      console.error(chalk.white('• Try running the command again'));
     }
   }
 
@@ -466,70 +550,169 @@ export class EbayOptimizerCLI {
     return `eBay Listing Optimization Summary - Enhanced Edition
 Generated: ${new Date().toLocaleString()}
 
-===============================================================================
 📝 OPTIMIZED TITLE (Ready to Copy & Paste)
-===============================================================================
 "${optimizedContent.optimizedTitle}"
 (${optimizedContent.optimizedTitle.length}/80 characters)
 
-===============================================================================
 🏷️  SEO KEYWORDS (Ready to Copy & Paste)
-===============================================================================
+
+KEYWORDS FOR EBAY TITLE (Top 3):
+${optimizedContent.keywords.slice(0, 3).join(' ')}
+
+ALL KEYWORDS FOR DESCRIPTION:
 ${optimizedContent.keywords.join(', ')}
 
-===============================================================================
+KEYWORDS COUNT: ${optimizedContent.keywords.length}
+
 💡 SELLING POINTS (Ready to Copy & Paste)
-===============================================================================
+
+COPY THESE POINTS DIRECTLY INTO YOUR DESCRIPTION:
 ${optimizedContent.sellingPoints.map((point, index) => `${index + 1}. ${point}`).join('\n')}
 
-===============================================================================
+SELLING POINTS COUNT: ${optimizedContent.sellingPoints.length}
+
 📄 OPTIMIZED DESCRIPTION (Ready to Copy & Paste)
-===============================================================================
+
+COPY THIS ENTIRE DESCRIPTION:
+${'='.repeat(60)}
 ${optimizedContent.optimizedDescription}
+${'='.repeat(60)}
 
-===============================================================================
+DESCRIPTION LENGTH: ${optimizedContent.optimizedDescription.length} characters
+
 💰 PRICING ANALYSIS
-===============================================================================
-Original Price: $${originalDetails.price}
-Suggested Price: $${optimizedContent.suggestedPrice}
-Market Confidence: ${Math.round((result.researchData?.priceAnalysis?.confidence || 0) * 100)}%
 
-===============================================================================
+ORIGINAL PRICE: $${originalDetails.price}
+SUGGESTED PRICE: $${optimizedContent.suggestedPrice}
+MARKET CONFIDENCE: ${Math.round((result.researchData?.priceAnalysis?.confidence || 0) * 100)}%
+
+${result.researchData && result.researchData.priceAnalysis ? `
+MARKET AVERAGE: $${result.researchData.priceAnalysis.averagePrice}
+PRICE RANGE: $${result.researchData.priceAnalysis.priceRange.min} - $${result.researchData.priceAnalysis.priceRange.max}
+SIMILAR LISTINGS ANALYZED: ${result.researchData.similarListings?.length || 0}
+` : ''}
+
 📦 ORIGINAL LISTING DETAILS
-===============================================================================
-Title: ${originalDetails.title}
-Price: $${originalDetails.price}
-Condition: ${originalDetails.condition}
-Images: ${originalDetails.images.length} found
 
-===============================================================================
+ORIGINAL TITLE: ${originalDetails.title}
+ORIGINAL PRICE: $${originalDetails.price}
+CONDITION: ${originalDetails.condition}
+IMAGES FOUND: ${originalDetails.images.length}
+SELLER: ${originalDetails.seller}
+LOCATION: ${originalDetails.location}
+
 📸 IMAGE INFORMATION
-===============================================================================
+
 ${originalDetails.images.map((img, index) => 
-  `Image ${index + 1}: ${img.url} (${img.size})`
-).join('\n')}
+  `IMAGE ${index + 1}:
+   URL: ${img.url}
+   SIZE: ${img.size}
+   ALT TEXT: ${img.altText || 'No alt text provided'}
+   `.trim()
+).join('\n\n')}
 
-===============================================================================
-NEXT STEPS
-===============================================================================
-1. Copy the OPTIMIZED TITLE above and paste it into your eBay listing
-2. Copy the SEO KEYWORDS and include them in your eBay title and description
-3. Copy the SELLING POINTS and incorporate them into your description
-4. Copy the OPTIMIZED DESCRIPTION for your eBay listing
-5. Download the images from the 'images' folder if you saved them locally
-6. Adjust pricing based on your profit margins
-7. Monitor listing performance and engagement
+🔧 QUICK ACTION CHECKLIST
 
-===============================================================================
-TIPS FOR SUCCESS
-===============================================================================
-• The optimized title is under 80 characters and includes high-value keywords
-• Keywords are based on market research and search volume analysis
-• Selling points highlight the most attractive features of your product
-• Pricing is optimized based on current market conditions
-• All content is ready to copy and paste directly into eBay
+✅ BEFORE LISTING:
+[ ] Copy optimized title to eBay listing
+[ ] Add top 3 keywords to eBay title
+[ ] Copy all keywords to eBay description
+[ ] Copy selling points to eBay description
+[ ] Copy optimized description to eBay description
+[ ] Download and upload images
+[ ] Set suggested price or adjust as needed
 
-===============================================================================
+✅ AFTER LISTING:
+[ ] Monitor views and clicks
+[ ] Track engagement metrics
+[ ] Adjust keywords based on performance
+[ ] Update pricing if market changes
+
+📊 MARKET INSIGHTS
+
+${result.researchData && result.researchData.similarListings && result.researchData.similarListings.length > 0 ? `
+COMPETITIVE ANALYSIS:
+- Found ${result.researchData.similarListings.length} similar listings
+- Price positioning: ${this.getPricePositioning(originalDetails.price, optimizedContent.suggestedPrice, result.researchData.priceAnalysis)}
+- Market opportunity: ${this.getMarketOpportunity(originalDetails.price, optimizedContent.suggestedPrice)}
+
+TOP COMPETITIVE KEYWORDS FROM MARKET RESEARCH:
+${this.extractTopMarketKeywords(result.researchData).join(', ')}
+` : 'Market research data not available for this listing.'}
+
+💡 PRO TIPS FOR SUCCESS
+
+TITLE OPTIMIZATION:
+• Keep under 80 characters for maximum visibility
+• Include high-value keywords at the beginning
+• Use clear, descriptive language
+• Avoid excessive punctuation or symbols
+
+KEYWORD STRATEGY:
+• Use keywords naturally in title and description
+• Include misspellings and variations
+• Add seasonal or trend-related keywords
+• Don't keyword stuff - keep it readable
+
+DESCRIPTION BEST PRACTICES:
+• Write in short, scannable paragraphs
+• Use bullet points for key features
+• Include specifications and dimensions
+• Add call-to-action phrases
+• Highlight unique selling propositions
+
+IMAGE OPTIMIZATION:
+• Use high-quality, well-lit photos
+• Include multiple angles
+• Show scale with common objects
+• Clean and edit images before uploading
+• Use descriptive filenames
+
+PRICING STRATEGY:
+• Consider shipping costs in your pricing
+• Research competitor pricing regularly
+• Be flexible for offers and negotiations
+• Monitor market trends and adjust accordingly
+
 `;
+  }
+
+  /**
+   * Helper method to determine price positioning
+   */
+  private getPricePositioning(originalPrice: number, suggestedPrice: number, priceAnalysis: any): string {
+    if (!priceAnalysis) return 'Unknown';
+    
+    const avgPrice = priceAnalysis.averagePrice;
+    const priceDiff = suggestedPrice - avgPrice;
+    const percentDiff = (priceDiff / avgPrice) * 100;
+    
+    if (Math.abs(percentDiff) < 5) return 'Competitive';
+    if (percentDiff > 10) return 'Premium';
+    if (percentDiff < -10) return 'Budget';
+    return 'Standard';
+  }
+
+  /**
+   * Helper method to determine market opportunity
+   */
+  private getMarketOpportunity(originalPrice: number, suggestedPrice: number): string {
+    const priceDiff = suggestedPrice - originalPrice;
+    const percentChange = (priceDiff / originalPrice) * 100;
+    
+    if (percentChange > 20) return 'High potential for increased profit';
+    if (percentChange > 0) return 'Moderate profit opportunity';
+    if (percentChange > -10) return 'Competitive pricing adjustment';
+    return 'Significant price reduction needed';
+  }
+
+  /**
+   * Helper method to extract top market keywords
+   */
+  private extractTopMarketKeywords(researchData: any): string[] {
+    if (!researchData || !researchData.keywordAnalysis) return [];
+    
+    const { popularKeywords } = researchData.keywordAnalysis;
+    return popularKeywords.slice(0, 5); // Return top 5 keywords
   }
 }
